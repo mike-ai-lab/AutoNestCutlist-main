@@ -7,6 +7,8 @@ module AutoNestCut
       'stock_materials' => {},
       'default_currency' => 'USD',
       'units' => 'mm',
+      'display_units' => 'mm',
+      'area_units' => 'm2',
       'precision' => 1
     }
     

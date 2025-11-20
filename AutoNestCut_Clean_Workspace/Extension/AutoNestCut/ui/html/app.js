@@ -706,6 +706,22 @@ function convertReportCurrency() {
     }
 }
 
+function updateAreaUnits() {
+    const select = document.getElementById('settingsAreaUnits');
+    if (!select) return;
+    
+    window.currentAreaUnits = select.value;
+    
+    // Update backend setting immediately
+    callRuby('update_global_setting', JSON.stringify({key: 'area_units', value: window.currentAreaUnits}));
+    localStorage.setItem('autoNestCutAreaUnits', window.currentAreaUnits);
+    
+    // Update report if it exists
+    if (typeof renderReport === 'function') {
+        renderReport();
+    }
+}
+
 function updateCurrency() {
     const select = document.getElementById('settingsCurrency');
     if (!select) return;
