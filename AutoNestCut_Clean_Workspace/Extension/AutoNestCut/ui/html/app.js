@@ -22,6 +22,7 @@ let exchangeRates = {
 const unitFactors = {
     'mm': 1,
     'cm': 10,
+    'm': 1000,
     'in': 25.4,
     'ft': 304.8
 };
@@ -30,6 +31,7 @@ const unitFactors = {
 const areaFactors = {
     'mm': 1000000, // mm² to m²
     'cm': 10000,   // cm² to m²
+    'm': 1,        // m² to m²
     'in': 645.16,  // in² to m²
     'ft': 10.764   // ft² to m²
 };
@@ -798,6 +800,7 @@ function getAreaUnitLabel() {
     switch(currentUnits) {
         case 'mm': return 'mm²';
         case 'cm': return 'cm²';
+        case 'm': return 'm²';
         case 'in': return 'in²';
         case 'ft': return 'ft²';
         default: return 'mm²';
