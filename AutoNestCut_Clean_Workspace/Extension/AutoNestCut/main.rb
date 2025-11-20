@@ -29,6 +29,8 @@ require_relative 'processors/nester'
 require_relative 'ui/dialog_manager'
 require_relative 'exporters/diagram_generator'
 require_relative 'exporters/report_generator'
+require_relative 'scheduler'
+require_relative 'supabase_client'
 require_relative 'util'
 
 module AutoNestCut
@@ -118,6 +120,39 @@ module AutoNestCut
     end
   end
 
+  def self.show_scheduler
+    html_file = File.join(__dir__, 'ui', 'html', 'scheduler.html')
+    
+    dialog = UI::HtmlDialog.new(
+      dialog_title: "Scheduled Exports",
+      preferences_key: "AutoNestCut_Scheduler",
+      scrollable: true,
+      resizable: true,
+      width: 600,
+      height: 500
+    )
+    
+    dialog.set_file(html_file)
+    
+    # Add callbacks for scheduler operations
+    dialog.add_action_callback('add_scheduled_task') do |context, name, hour, filters, format, email|
+      Scheduler.add_task(name, hour, JSON.parse(filters), format, email)
+    end
+    
+    dialog.add_action_callback('get_scheduled_tasks') do |context|
+      tasks = Scheduler.load_tasks
+      dialog.execute_script("displayTasks(#{tasks.to_json})")
+    end
+    
+    dialog.add_action_callback('delete_scheduled_task') do |context, task_id|
+      tasks = Scheduler.load_tasks
+      tasks.reject! { |t| t[:id] == task_id }
+      Scheduler.save_tasks(tasks)
+    end
+    
+    dialog.show
+  end
+
   def self.setup_ui
     unless file_loaded?("#{__FILE__}-ui")
       # Create main menu
@@ -126,6 +161,8 @@ module AutoNestCut
 
       # Call the renamed primary function
       autonest_menu.add_item('Generate Cut List') { AutoNestCut.run_extension_feature }
+      autonest_menu.add_separator
+      autonest_menu.add_item('Scheduled Exports') { AutoNestCut.show_scheduler }
       autonest_menu.add_separator
       autonest_menu.add_item('Documentation - How to...') { AutoNestCut.show_documentation }
 
@@ -163,6 +200,20 @@ module AutoNestCut
     end
   end
 
+  # Start background scheduler timer
+  def self.start_scheduler_timer
+    return if defined?(@@scheduler_timer)
+    
+    @@scheduler_timer = UI.start_timer(300, true) do # Check every 5 minutes
+      begin
+        Scheduler.check_due_tasks
+      rescue => e
+        puts "Scheduler error: #{e.message}"
+      end
+    end
+    puts "✅ Scheduler timer started"
+  end
+
   # Module initialization
   unless defined?(@@loaded)
     @@loaded = true
@@ -171,6 +222,7 @@ module AutoNestCut
     
     unless defined?(AutoNestCutPowerLoader)
       setup_ui
+      start_scheduler_timer
       
       if defined?(AutoNestCut::LicenseManager) && defined?(AutoNestCut::TrialManager)
         unless AutoNestCut::LicenseManager.has_valid_license?

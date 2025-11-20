@@ -227,5 +227,69 @@ module AutoNestCut
         csv << ["Overall Efficiency %", (summary[:overall_efficiency] || 0).to_f]
       end
     end
+    def self.generate_scheduled_report(filters, format)
+      # Get current model data
+      model = Sketchup.active_model
+      selection = model.selection.empty? ? model.entities : model.selection
+      
+      # Analyze model
+      analyzer = AutoNestCut::ModelAnalyzer.new
+      parts = analyzer.analyze_selection(selection)
+      
+      # Apply filters
+      filtered_parts = apply_filters(parts, filters)
+      
+      # Generate nesting
+      nester = AutoNestCut::Nester.new
+      boards = nester.nest_parts(filtered_parts)
+      
+      # Generate report in requested format
+      generator = new
+      report_data = generator.generate_report_data(boards)
+      
+      case format.downcase
+      when 'csv'
+        generate_csv_data(report_data)
+      when 'json'
+        report_data.to_json
+      when 'pdf'
+        generate_pdf_data(report_data)
+      else
+        report_data.to_json
+      end
+    end
+    
+    private
+    
+    def self.apply_filters(parts, filters)
+      return parts unless filters
+      
+      filtered = parts
+      filtered = filtered.select { |p| p.material == filters['material'] } if filters['material']
+      filtered = filtered.select { |p| p.thickness >= filters['min_thickness'] } if filters['min_thickness']
+      filtered = filtered.select { |p| p.thickness <= filters['max_thickness'] } if filters['max_thickness']
+      filtered
+    end
+    
+    def self.generate_csv_data(report_data)
+      csv_string = ""
+      CSV.generate(csv_string) do |csv|
+        csv << ["UNIQUE PART TYPES SUMMARY"]
+        csv << ["Name", "Width(mm)", "Height(mm)", "Thickness(mm)", "Material", "Quantity"]
+        (report_data[:unique_part_types] || []).each do |part|
+          csv << [part[:name], part[:width], part[:height], part[:thickness], part[:material], part[:total_quantity]]
+        end
+      end
+      csv_string
+    end
+    
+    def self.generate_pdf_data(report_data)
+      # Simple text-based PDF content
+      content = "AutoNestCut Report\n\n"
+      content += "Total Parts: #{report_data[:summary][:total_parts_instances]}\n"
+      content += "Total Boards: #{report_data[:summary][:total_boards]}\n"
+      content += "Efficiency: #{report_data[:summary][:overall_efficiency]}%\n"
+      content
+    end
   end
 end
