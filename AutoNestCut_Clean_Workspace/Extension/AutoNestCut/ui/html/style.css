@@ -631,3 +631,131 @@ tbody tr:hover {
 .close:hover {
     color: #24292e;
 }
+
+/* Facade Calculator Specific Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 900;
+    color: #24292e;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #656d76;
+    font-weight: 600;
+}
+
+.preset-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.material-option {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.material-option:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+}
+
+.material-option.selected {
+    background: #24292e;
+    color: #ffffff;
+    border-color: #24292e;
+}
+
+.material-name {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.material-details {
+    font-size: 12px;
+    color: #656d76;
+    margin-bottom: 2px;
+}
+
+.material-option.selected .material-details,
+.material-option.selected .material-pattern {
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+.material-pattern {
+    font-size: 12px;
+    color: #656d76;
+    font-style: italic;
+}
+
+.results-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.result-group {
+    background: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+}
+
+.result-group h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 900;
+    color: #24292e;
+}
+
+.result-group p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #24292e;
+}
+
+.result-group strong {
+    font-weight: 800;
+}
+
+select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #24292e;
+    box-sizing: border-box;
+}
+
+select:focus {
+    outline: none;
+    border-color: #24292e;
+    box-shadow: 0 0 0 3px rgba(36, 41, 46, 0.1);
+}

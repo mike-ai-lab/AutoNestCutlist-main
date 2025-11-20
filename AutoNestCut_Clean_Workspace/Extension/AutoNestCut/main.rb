@@ -24,11 +24,15 @@ require_relative 'materials_database'
 require_relative 'config'
 require_relative 'models/part'
 require_relative 'models/board'
+require_relative 'models/facade_surface'
+require_relative 'models/cladding_preset'
 require_relative 'processors/model_analyzer'
 require_relative 'processors/nester'
+require_relative 'processors/facade_analyzer'
 require_relative 'ui/dialog_manager'
 require_relative 'exporters/diagram_generator'
 require_relative 'exporters/report_generator'
+require_relative 'exporters/facade_reporter'
 require_relative 'scheduler'
 require_relative 'supabase_client'
 require_relative 'util'
@@ -153,6 +157,77 @@ module AutoNestCut
     dialog.show
   end
 
+  def self.show_facade_calculator
+    model = Sketchup.active_model
+    selection = model.selection
+
+    if selection.empty?
+      UI.messagebox("Please select facade surfaces (faces) to analyze for material calculation.")
+      return
+    end
+
+    html_file = File.join(__dir__, 'ui', 'html', 'facade_config.html')
+    
+    dialog = UI::HtmlDialog.new(
+      dialog_title: "Facade Materials Calculator",
+      preferences_key: "AutoNestCut_Facade",
+      scrollable: true,
+      resizable: true,
+      width: 900,
+      height: 700
+    )
+    
+    dialog.set_file(html_file)
+    
+    # Initialize facade analyzer
+    analyzer = FacadeAnalyzer.new
+    surfaces = analyzer.analyze_selection(selection)
+    
+    # Add callbacks for facade operations
+    dialog.add_action_callback('analyze_selected_surfaces') do |context|
+      surface_info = {
+        count: surfaces.length,
+        area: surfaces.sum(&:area_m2).round(2),
+        types: get_surface_types_summary(surfaces)
+      }
+      dialog.execute_script("updateSurfaceInfo(#{surface_info.to_json})")
+    end
+    
+    dialog.add_action_callback('get_facade_presets') do |context|
+      presets = load_facade_presets
+      dialog.execute_script("displayPresets(#{presets.to_json})")
+    end
+    
+    dialog.add_action_callback('calculate_facade_materials') do |context, settings_json|
+      settings = JSON.parse(settings_json)
+      preset = find_preset_by_name(settings['preset'])
+      
+      if preset
+        quantities = analyzer.calculate_quantities(surfaces, preset)
+        surface_breakdown = analyzer.generate_surface_breakdown(surfaces)
+        
+        reporter = FacadeReporter.new
+        report_data = reporter.generate_facade_report(quantities, surface_breakdown, settings)
+        
+        dialog.execute_script("displayResults(#{report_data[:cost_estimation].to_json})")
+        @last_facade_report = report_data
+      end
+    end
+    
+    dialog.add_action_callback('export_facade_report') do |context|
+      if @last_facade_report
+        filename = UI.savepanel("Save Facade Materials Report", "", "facade_materials.csv")
+        if filename
+          reporter = FacadeReporter.new
+          reporter.export_facade_csv(filename, @last_facade_report)
+          UI.messagebox("Facade materials report exported to: #{filename}")
+        end
+      end
+    end
+    
+    dialog.show
+  end
+
   def self.setup_ui
     unless file_loaded?("#{__FILE__}-ui")
       # Create main menu
@@ -161,6 +236,8 @@ module AutoNestCut
 
       # Call the renamed primary function
       autonest_menu.add_item('Generate Cut List') { AutoNestCut.run_extension_feature }
+      autonest_menu.add_separator
+      autonest_menu.add_item('Facade Materials Calculator') { AutoNestCut.show_facade_calculator }
       autonest_menu.add_separator
       autonest_menu.add_item('Scheduled Exports') { AutoNestCut.show_scheduler }
       autonest_menu.add_separator
@@ -212,6 +289,48 @@ module AutoNestCut
       end
     end
     puts "✅ Scheduler timer started"
+  end
+
+  # Helper methods for facade calculator
+  def self.get_surface_types_summary(surfaces)
+    types = surfaces.group_by(&:orientation)
+    summary = types.keys.join(', ')
+    summary.empty? ? 'Mixed' : summary.capitalize
+  end
+  
+  def self.load_facade_presets
+    # For now, return built-in presets. Later can load from V121_LAYOUT presets
+    [
+      {
+        name: 'Standard Brick',
+        dimensions: '215×65×20mm',
+        pattern: 'Running Bond'
+      },
+      {
+        name: 'Large Stone',
+        dimensions: '400×200×30mm', 
+        pattern: 'Stack Bond'
+      },
+      {
+        name: 'Small Tiles',
+        dimensions: '200×200×10mm',
+        pattern: 'Grid'
+      }
+    ]
+  end
+  
+  def self.find_preset_by_name(name)
+    # Create a basic preset for testing
+    preset_data = {
+      'length' => '215',
+      'height' => '65', 
+      'thickness' => 20.0,
+      'joint_length' => 10.0,
+      'joint_width' => 10.0,
+      'pattern_type' => 'running_bond',
+      'color_name' => name
+    }
+    CladdingPreset.new(preset_data, name)
   end
 
   # Module initialization

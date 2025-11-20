@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Facade Materials Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        .section { margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 5px; }
+        .section h2 { margin-top: 0; color: #555; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .stat-card { background: white; padding: 15px; border-radius: 5px; text-align: center; border: 1px solid #ddd; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #2196F3; }
+        .stat-label { font-size: 12px; color: #666; margin-top: 5px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .preset { background: white; padding: 10px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .preset:hover { background: #e3f2fd; }
+        .preset.selected { background: #2196F3; color: white; }
+        .btn { padding: 10px 20px; background: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
+        .btn:hover { background: #1976D2; }
+        .btn-secondary { background: #666; }
+        .btn-secondary:hover { background: #555; }
+        .results { background: #e8f5e8; padding: 15px; border-radius: 5px; margin-top: 20px; }
+        .results h3 { color: #2e7d32; margin-top: 0; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facade Materials Calculator</h1>
+        
+        <div class="section">
+            <h2>Surface Analysis</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="surfaceCount">0</div>
+                    <div class="stat-label">Surfaces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalArea">0 m²</div>
+                    <div class="stat-label">Total Area</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Detected Stone Dimensions</h2>
+            <div id="detectedDimensions">
+                <p>Select layout groups to auto-detect stone dimensions...</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Material Presets</h2>
+            <div class="presets">
+                <div class="preset" onclick="selectPreset('detected')" id="detectedPreset" style="display: none;">
+                    <strong>Detected Dimensions</strong><br>
+                    <small id="detectedSizes">-</small>
+                </div>
+                <div class="preset" onclick="selectPreset('brick')">
+                    <strong>Standard Brick</strong><br>
+                    <small>215 × 65 × 20mm</small>
+                </div>
+                <div class="preset" onclick="selectPreset('stone')">
+                    <strong>Natural Stone</strong><br>
+                    <small>400 × 200 × 30mm</small>
+                </div>
+                <div class="preset" onclick="selectPreset('tile')">
+                    <strong>Ceramic Tile</strong><br>
+                    <small>300 × 300 × 10mm</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Custom Settings</h2>
+            <div class="form-group">
+                <label>Piece Length (mm):</label>
+                <input type="number" id="pieceLength" value="215">
+            </div>
+            <div class="form-group">
+                <label>Piece Height (mm):</label>
+                <input type="number" id="pieceHeight" value="65">
+            </div>
+            <div class="form-group">
+                <label>Joint Width (mm):</label>
+                <input type="number" id="jointWidth" value="10">
+            </div>
+            <div class="form-group">
+                <label>Waste Factor (%):</label>
+                <input type="number" id="wasteFactor" value="10" min="5" max="25">
+            </div>
+            <div class="form-group">
+                <label>Cost per Piece:</label>
+                <input type="number" id="costPerPiece" value="0" step="0.01">
+            </div>
+        </div>
+        
+        <div class="section">
+            <button class="btn" onclick="calculateMaterials()">Calculate Materials</button>
+            <button class="btn btn-secondary" onclick="exportResults()">Export CSV</button>
+        </div>
+        
+        <div id="results" class="results" style="display: none;">
+            <h3>Calculation Results</h3>
+            <div class="results-grid">
+                <div>
+                    <h4>Quantities</h4>
+                    <p><strong>Total Area:</strong> <span id="resultArea">-</span> m²</p>
+                    <p><strong>Pieces per m²:</strong> <span id="piecesPerM2">-</span></p>
+                    <p><strong>Total Pieces:</strong> <span id="totalPieces">-</span></p>
+                    <p><strong>Waste Pieces:</strong> <span id="wastePieces">-</span></p>
+                </div>
+                <div>
+                    <h4>Cost</h4>
+                    <p><strong>Material Cost:</strong> $<span id="materialCost">-</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let surfaceData = null;
+        let detectedDims = null;
+        
+        function displaySurfaceData(data) {
+            surfaceData = data;
+            document.getElementById('surfaceCount').textContent = data.count;
+            document.getElementById('totalArea').textContent = data.total_area + ' m²';
+            
+            if (data.detected_dimensions) {
+                displayDetectedDimensions(data.detected_dimensions);
+            }
+        }
+        
+        function displayDetectedDimensions(dims) {
+            detectedDims = dims;
+            const container = document.getElementById('detectedDimensions');
+            
+            if (dims.lengths && dims.lengths.length > 0) {
+                let html = '<h4>Auto-Detected from Stone Layout:</h4>';
+                html += `<p><strong>Lengths:</strong> ${dims.lengths.join(', ')} mm</p>`;
+                html += `<p><strong>Heights:</strong> ${dims.heights.join(', ')} mm</p>`;
+                html += `<p><strong>Thickness:</strong> ${dims.thickness} mm</p>`;
+                container.innerHTML = html;
+                
+                // Show detected preset option
+                const detectedPreset = document.getElementById('detectedPreset');
+                const detectedSizes = document.getElementById('detectedSizes');
+                detectedPreset.style.display = 'block';
+                detectedSizes.textContent = `${dims.lengths[0]} × ${dims.heights[0]} × ${dims.thickness}mm`;
+            } else {
+                container.innerHTML = '<p>No stone dimensions detected. Select layout groups containing stone pieces.</p>';
+            }
+        }
+        
+        function selectPreset(type) {
+            document.querySelectorAll('.preset').forEach(p => p.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            const presets = {
+                detected: detectedDims ? { 
+                    length: detectedDims.lengths[0] || 200, 
+                    height: detectedDims.heights[0] || 100, 
+                    joint: 10 
+                } : { length: 200, height: 100, joint: 10 },
+                brick: { length: 215, height: 65, joint: 10 },
+                stone: { length: 400, height: 200, joint: 15 },
+                tile: { length: 300, height: 300, joint: 5 }
+            };
+            
+            const preset = presets[type];
+            document.getElementById('pieceLength').value = preset.length;
+            document.getElementById('pieceHeight').value = preset.height;
+            document.getElementById('jointWidth').value = preset.joint;
+        }
+        
+        function calculateMaterials() {
+            const settings = {
+                piece_length: document.getElementById('pieceLength').value,
+                piece_height: document.getElementById('pieceHeight').value,
+                joint_width: document.getElementById('jointWidth').value,
+                waste_factor: document.getElementById('wasteFactor').value,
+                cost_per_piece: document.getElementById('costPerPiece').value
+            };
+            
+            sketchup.calculate_materials(JSON.stringify(settings));
+        }
+        
+        function displayResults(results) {
+            document.getElementById('resultArea').textContent = results.total_area;
+            document.getElementById('piecesPerM2').textContent = results.pieces_per_m2;
+            document.getElementById('totalPieces').textContent = results.total_pieces;
+            document.getElementById('wastePieces').textContent = results.waste_pieces;
+            document.getElementById('materialCost').textContent = results.material_cost;
+            
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function exportResults() {
+            alert('Export functionality would save CSV file');
+        }
+        
+        // Load surface data on page load
+        window.onload = function() {
+            sketchup.get_surface_data();
+        };
+    </script>
+</body>
+</html>
