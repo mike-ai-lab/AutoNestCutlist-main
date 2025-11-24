@@ -220,12 +220,124 @@
             <div id="reportContainer" class="report-container">
                 <div class="report-title">
                     <h2 data-translate="report_details">Report Details</h2>
+                    <button class="icon-btn" id="globalTableSettingsBtn" onclick="toggleGlobalTableSettings()" title="Global Table Settings">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <path d="M9 9h6v6H9z"/>
+                            <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Global Table Controls -->
+                <div id="globalTableControls" class="global-table-controls">
+                    <h3>Global Table Settings (Apply to All Tables)</h3>
+                    
+                    <div class="global-settings-grid">
+                        <div class="global-setting-group">
+                            <h4>Appearance</h4>
+                            <div class="global-setting-row">
+                                <label>Font Size:</label>
+                                <select id="globalFontSize" onchange="applyGlobalTableSetting('fontSize', this.value)">
+                                    <option value="12px">Small</option>
+                                    <option value="14px" selected>Normal</option>
+                                    <option value="16px">Large</option>
+                                </select>
+                            </div>
+                            <div class="global-setting-row">
+                                <label>Cell Padding:</label>
+                                <select id="globalCellPadding" onchange="applyGlobalTableSetting('cellPadding', this.value)">
+                                    <option value="4px 8px">Compact</option>
+                                    <option value="8px 12px" selected>Normal</option>
+                                    <option value="12px 16px">Spacious</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="global-setting-group">
+                            <h4>Colors</h4>
+                            <div class="global-color-row">
+                                <div class="color-group">
+                                    <label>Header BG:</label>
+                                    <input type="color" id="globalHeaderBg" class="color-input-small" value="#f5f5f5" onchange="applyGlobalTableSetting('headerBg', this.value)">
+                                </div>
+                                <div class="color-group">
+                                    <label>Header Text:</label>
+                                    <input type="color" id="globalHeaderColor" class="color-input-small" value="#000000" onchange="applyGlobalTableSetting('headerColor', this.value)">
+                                </div>
+                                <div class="color-group">
+                                    <label>Row Hover:</label>
+                                    <input type="color" id="globalRowHover" class="color-input-small" value="#f6f8fa" onchange="applyGlobalTableSetting('rowHover', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="global-setting-group">
+                            <h4>Alignment</h4>
+                            <div class="global-setting-row">
+                                <label>Text Align:</label>
+                                <select id="globalTextAlign" onchange="applyGlobalTableSetting('textAlign', this.value)">
+                                    <option value="left" selected>Left</option>
+                                    <option value="center">Center</option>
+                                    <option value="right">Right</option>
+                                </select>
+                            </div>
+                            <div class="global-setting-row">
+                                <label>Vertical Align:</label>
+                                <select id="globalVerticalAlign" onchange="applyGlobalTableSetting('verticalAlign', this.value)">
+                                    <option value="top">Top</option>
+                                    <option value="middle" selected>Middle</option>
+                                    <option value="bottom">Bottom</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="global-setting-group">
+                            <h4>Text & Borders</h4>
+                            <div class="global-setting-row">
+                                <label>Text Wrap:</label>
+                                <select id="globalTextWrap" onchange="applyGlobalTableSetting('textWrap', this.value)">
+                                    <option value="nowrap">No Wrap</option>
+                                    <option value="normal" selected>Wrap</option>
+                                    <option value="break-word">Break Words</option>
+                                </select>
+                            </div>
+                            <div class="global-setting-row">
+                                <label>Border Width:</label>
+                                <select id="globalBorderWidth" onchange="applyGlobalTableSetting('borderWidth', this.value)">
+                                    <option value="0px">None</option>
+                                    <option value="1px" selected>Light</option>
+                                    <option value="2px">Medium</option>
+                                    <option value="3px">Heavy</option>
+                                </select>
+                            </div>
+                            <div class="global-color-row">
+                                <div class="color-group">
+                                    <label>Border Color:</label>
+                                    <input type="color" id="globalBorderColor" class="color-input-small" value="#d0d7de" onchange="applyGlobalTableSetting('borderColor', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-buttons">
+                        <button onclick="applyAllGlobalSettings()" class="primary">Apply to All</button>
+                        <button onclick="resetAllTableSettings()">Reset All</button>
+                        <button onclick="toggleGlobalTableSettings()">Close</button>
+                    </div>
                 </div>
                 
                 <div class="section-separator"></div>
                 <h2 data-translate="materials_used">Materials Used</h2>
                 <div class="table-with-controls">
                     <div class="table-controls">
+                        <button class="icon-btn" onclick="openTableCustomization('materialsUsedTable')" title="Customize Table">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                            </svg>
+                        </button>
                         <button class="icon-btn" onclick="copyTableAsMarkdown('materialsUsedTable')" title="Copy Markdown">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -240,6 +352,13 @@
                 <h2 data-translate="overall_summary">Overall Summary</h2>
                 <div class="table-with-controls">
                     <div class="table-controls">
+                        <button class="icon-btn" onclick="openTableCustomization('summaryTable')" title="Customize Table">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                            </svg>
+                        </button>
                         <button class="icon-btn" onclick="copyTableAsMarkdown('summaryTable')" title="Copy Markdown">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -254,6 +373,13 @@
                 <h2 data-translate="unique_part_types">Unique Part Types</h2>
                 <div class="table-with-controls">
                     <div class="table-controls">
+                        <button class="icon-btn" onclick="openTableCustomization('uniquePartTypesTable')" title="Customize Table">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                            </svg>
+                        </button>
                         <button class="icon-btn" onclick="copyTableAsMarkdown('uniquePartTypesTable')" title="Copy Markdown">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -268,6 +394,13 @@
                 <h2>Sheet Inventory Summary</h2>
                  <div class="table-with-controls">
                     <div class="table-controls">
+                        <button class="icon-btn" onclick="openTableCustomization('sheetInventoryTable')" title="Customize Table">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                            </svg>
+                        </button>
                         <button class="icon-btn" onclick="copyTableAsMarkdown('sheetInventoryTable')" title="Copy Markdown">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -292,6 +425,13 @@
                 <div id="treeStructure" class="tree-structure" style="display: none;"></div>
                 <div class="table-with-controls">
                     <div class="table-controls">
+                        <button class="icon-btn" onclick="openTableCustomization('partsTable')" title="Customize Table">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                            </svg>
+                        </button>
                         <button class="icon-btn" onclick="copyTableAsMarkdown('partsTable')" title="Copy Markdown">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
@@ -304,6 +444,106 @@
             </div>
         </div>
     </div>
+
+    <!-- Table Customization Panel -->
+    <div id="tableCustomizationPanel" class="table-customization-panel">
+        <h3 id="panelTitle">Table Settings</h3>
+        
+        <div class="table-setting-group">
+            <h4>Appearance</h4>
+            <div class="table-setting-row">
+                <label>Font Size:</label>
+                <select id="tableFontSize" onchange="applyTableSetting('fontSize', this.value)">
+                    <option value="12px">Small</option>
+                    <option value="14px" selected>Normal</option>
+                    <option value="16px">Large</option>
+                </select>
+            </div>
+            <div class="table-setting-row">
+                <label>Cell Padding:</label>
+                <select id="tableCellPadding" onchange="applyTableSetting('cellPadding', this.value)">
+                    <option value="4px 8px">Compact</option>
+                    <option value="8px 12px" selected>Normal</option>
+                    <option value="12px 16px">Spacious</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-setting-group">
+            <h4>Colors</h4>
+            <div class="table-setting-row">
+                <label>Header Background:</label>
+                <input type="color" id="tableHeaderBg" class="color-input" value="#f5f5f5" onchange="applyTableSetting('headerBg', this.value)">
+            </div>
+            <div class="table-setting-row">
+                <label>Header Text:</label>
+                <input type="color" id="tableHeaderColor" class="color-input" value="#000000" onchange="applyTableSetting('headerColor', this.value)">
+            </div>
+            <div class="table-setting-row">
+                <label>Row Hover:</label>
+                <input type="color" id="tableRowHover" class="color-input" value="#f6f8fa" onchange="applyTableSetting('rowHover', this.value)">
+            </div>
+        </div>
+        
+        <div class="table-setting-group">
+            <h4>Alignment</h4>
+            <div class="table-setting-row">
+                <label>Text Align:</label>
+                <select id="tableTextAlign" onchange="applyTableSetting('textAlign', this.value)">
+                    <option value="left" selected>Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                </select>
+            </div>
+            <div class="table-setting-row">
+                <label>Vertical Align:</label>
+                <select id="tableVerticalAlign" onchange="applyTableSetting('verticalAlign', this.value)">
+                    <option value="top">Top</option>
+                    <option value="middle" selected>Middle</option>
+                    <option value="bottom">Bottom</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-setting-group">
+            <h4>Text Wrapping</h4>
+            <div class="table-setting-row">
+                <label>Text Wrap:</label>
+                <select id="tableTextWrap" onchange="applyTableSetting('textWrap', this.value)">
+                    <option value="nowrap">No Wrap (Clip)</option>
+                    <option value="normal" selected>Wrap Text</option>
+                    <option value="break-word">Break Words</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-setting-group">
+            <h4>Borders</h4>
+            <div class="table-setting-row">
+                <label>Border Width:</label>
+                <select id="tableBorderWidth" onchange="applyTableSetting('borderWidth', this.value)">
+                    <option value="0px">None</option>
+                    <option value="1px" selected>Light</option>
+                    <option value="2px">Medium</option>
+                    <option value="3px">Heavy</option>
+                </select>
+            </div>
+            <div class="table-setting-row">
+                <label>Border Color:</label>
+                <input type="color" id="tableBorderColor" class="color-input" value="#d0d7de" onchange="applyTableSetting('borderColor', this.value)">
+            </div>
+        </div>
+        
+        <div class="panel-buttons">
+            <button onclick="applyCurrentTableSettings()" class="primary">Apply</button>
+            <button onclick="applyToGlobal()" class="secondary">Apply to Global</button>
+            <button onclick="resetTableSettings()">Reset</button>
+            <button onclick="closeTableCustomization()">Close</button>
+        </div>
+    </div>
+
+    <!-- Modal overlay for table customization -->
+    <div class="modal-overlay" onclick="closeTableCustomization()"></div>
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
@@ -411,6 +651,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="app.js"></script>
     <script src="diagrams_report.js"></script>
+    <script src="table_customization.js"></script>
     <script src="resizer_fix.js"></script>
     <script>
         let currentReportData = null;
@@ -474,10 +715,13 @@
                 // Initialize export button event listeners only once
                 initializeExportButtons();
                 
-                // Re-initialize resizer after showing report tab
+                // Re-initialize resizer and table customization after showing report tab
                 setTimeout(() => {
                     resizerInitialized = false;
                     initResizer();
+                    if (typeof reinitializeTableCustomization === 'function') {
+                        reinitializeTableCustomization();
+                    }
                 }, 200);
             } else {
                 console.error('Invalid data structure received:', data);
