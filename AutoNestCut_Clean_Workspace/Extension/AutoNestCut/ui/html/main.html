@@ -320,53 +320,95 @@
                         </div>
                     </div>
                     
-                    <div class="panel-buttons">
-                        <button onclick="applyAllGlobalSettings()" class="primary">Apply to All</button>
-                        <button onclick="resetAllTableSettings()">Reset All</button>
-                        <button onclick="toggleGlobalTableSettings()">Close</button>
+                    <div class="template-management">
+                        <h4>Templates & Settings</h4>
+                        <div class="compact-controls">
+                            <select id="templateSelector" onchange="loadSelectedTemplate()" class="compact-select">
+                                <option value="">Select Template...</option>
+                            </select>
+                            <div class="compact-buttons">
+                                <button onclick="openTemplateManager()" class="icon-btn compact" title="Manage Templates">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                                        <path d="M3 9h18M9 21V9"/>
+                                    </svg>
+                                </button>
+                                <button onclick="saveCurrentGlobalTemplate()" class="icon-btn compact" title="Save Template">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <path d="M17 21v-8H7v8M7 3v5h8"/>
+                                    </svg>
+                                </button>
+                                <button onclick="exportGlobalSettings()" class="icon-btn compact" title="Export Settings">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                </button>
+                                <button onclick="importGlobalSettings()" class="icon-btn compact" title="Import Settings">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="compact-panel-buttons">
+                        <button onclick="applyAllGlobalSettings()" class="btn-compact primary">Apply All</button>
+                        <button onclick="resetAllTableSettings()" class="btn-compact">Reset</button>
+                        <button onclick="toggleGlobalTableSettings()" class="btn-compact">Close</button>
                     </div>
                 </div>
                 
                 <div class="section-separator"></div>
-                <h2 data-translate="materials_used">Materials Used</h2>
-                <div class="table-with-controls">
-                    <div class="table-controls">
-                        <button class="icon-btn" onclick="openTableCustomization('materialsUsedTable')" title="Customize Table">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                <path d="M9 9h6v6H9z"/>
-                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
-                            </svg>
-                        </button>
-                        <button class="icon-btn" onclick="copyTableAsMarkdown('materialsUsedTable')" title="Copy Markdown">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                            </svg>
-                        </button>
+                <div class="side-by-side-tables">
+                    <div class="side-table">
+                        <h2 data-translate="materials_used">Materials Used</h2>
+                        <div class="table-with-controls">
+                            <div class="table-controls">
+                                <button class="icon-btn" onclick="openTableCustomization('materialsUsedTable')" title="Customize Table">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <path d="M9 9h6v6H9z"/>
+                                        <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                                    </svg>
+                                </button>
+                                <button class="icon-btn" onclick="copyTableAsMarkdown('materialsUsedTable')" title="Copy Markdown">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <table id="materialsUsedTable"></table>
+                        </div>
                     </div>
-                    <table id="materialsUsedTable"></table>
-                </div>
-
-                <div class="section-separator"></div>
-                <h2 data-translate="overall_summary">Overall Summary</h2>
-                <div class="table-with-controls">
-                    <div class="table-controls">
-                        <button class="icon-btn" onclick="openTableCustomization('summaryTable')" title="Customize Table">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                <path d="M9 9h6v6H9z"/>
-                                <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
-                            </svg>
-                        </button>
-                        <button class="icon-btn" onclick="copyTableAsMarkdown('summaryTable')" title="Copy Markdown">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
-                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                            </svg>
-                        </button>
+                    
+                    <div class="side-table">
+                        <h2 data-translate="overall_summary">Overall Summary</h2>
+                        <div class="table-with-controls">
+                            <div class="table-controls">
+                                <button class="icon-btn" onclick="openTableCustomization('summaryTable')" title="Customize Table">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <path d="M9 9h6v6H9z"/>
+                                        <path d="M9 3v6M15 3v6M21 9H3M21 15H3"/>
+                                    </svg>
+                                </button>
+                                <button class="icon-btn" onclick="copyTableAsMarkdown('summaryTable')" title="Copy Markdown">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <table id="summaryTable"></table>
+                        </div>
                     </div>
-                    <table id="summaryTable"></table>
                 </div>
 
                 <div class="section-separator"></div>
@@ -534,6 +576,32 @@
             </div>
         </div>
         
+        <div class="table-setting-group">
+            <h4>Text Labels</h4>
+            <div class="table-setting-row">
+                <label>Low Cost Label:</label>
+                <input type="text" id="lowCostLabel" value="Budget" onchange="updateTextLabel('low', this.value)" placeholder="Budget">
+            </div>
+            <div class="table-setting-row">
+                <label>Average Cost Label:</label>
+                <input type="text" id="avgCostLabel" value="Standard" onchange="updateTextLabel('avg', this.value)" placeholder="Standard">
+            </div>
+            <div class="table-setting-row">
+                <label>High Cost Label:</label>
+                <input type="text" id="highCostLabel" value="Premium" onchange="updateTextLabel('high', this.value)" placeholder="Premium">
+            </div>
+        </div>
+        
+        <div class="template-section">
+            <h4>Templates</h4>
+            <div class="template-controls">
+                <select id="individualTemplateSelector" onchange="loadIndividualTemplate()">
+                    <option value="">Select Template...</option>
+                </select>
+                <button onclick="saveCurrentAsTemplate()" class="secondary">Save as Template</button>
+            </div>
+        </div>
+        
         <div class="panel-buttons">
             <button onclick="applyCurrentTableSettings()" class="primary">Apply</button>
             <button onclick="applyToGlobal()" class="secondary">Apply to Global</button>
@@ -544,6 +612,38 @@
 
     <!-- Modal overlay for table customization -->
     <div class="modal-overlay" onclick="closeTableCustomization()"></div>
+
+    <!-- Template Manager Modal -->
+    <div id="templateManagerModal" class="modal">
+        <div class="modal-content template-manager-content">
+            <span class="close" onclick="closeTemplateManager()">&times;</span>
+            <h3>Template Manager</h3>
+            
+            <div class="template-categories">
+                <div class="category-tabs">
+                    <button class="category-tab active" onclick="showTemplateCategory('predefined')">Built-in Templates</button>
+                    <button class="category-tab" onclick="showTemplateCategory('custom')">My Templates</button>
+                </div>
+                
+                <div id="predefinedTemplates" class="template-category active">
+                    <div class="template-grid" id="predefinedTemplateGrid"></div>
+                </div>
+                
+                <div id="customTemplates" class="template-category">
+                    <div class="template-actions">
+                        <input type="file" id="templateImportFile" accept=".json" style="display: none;" onchange="importTemplateFile(this)">
+                        <button onclick="document.getElementById('templateImportFile').click()">Import Template</button>
+                        <button onclick="exportAllTemplates()">Export All Templates</button>
+                    </div>
+                    <div class="template-grid" id="customTemplateGrid"></div>
+                </div>
+            </div>
+            
+            <div class="template-manager-buttons">
+                <button onclick="closeTemplateManager()">Close</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
