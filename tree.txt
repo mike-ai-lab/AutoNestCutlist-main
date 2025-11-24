@@ -1,0 +1,424 @@
+
+
+
+PS C:\Users\Administrator\Desktop\AUTOMATION\cutlist\AutoNestCut\AutoNestCut_Clean_Workspace\safe_backup\Extension-2> tree /f
+Folder PATH listing
+Volume serial number is 409B-8587
+C:.
+│   Component_2.skp
+│   loader.rb
+│   MINIMAL_SCHEDULER_TEST.rb
+│   POWER_LOADER.rb
+│   RELOAD_FACADE-2.rb
+│   RELOAD_FACADE-3.rb
+│   RELOAD_SCHEDULER.rb
+│   TEST_FACADE_MENU.rb
+│   TEST_SCHEDULER_MENU.rb
+│
+├───AutoNestCut
+│   │   CLEAR_BROWSER_CACHE.rb
+│   │   CLEAR_CACHE_TEST.rb
+│   │   compatibility.rb
+│   │   config.rb
+│   │   FIXED_TEST_SCRIPT.rb
+│   │   FORCE_RELOAD.rb
+│   │   integrity_checker.rb
+│   │   license_hardening.rb
+│   │   main.rb
+│   │   main.rb.secured
+│   │   main_no_license.rb
+│   │   MANUAL_TEST.rb
+│   │   materials_database.rb
+│   │   RELOAD_EXTENSION.rb
+│   │   scheduler.rb
+│   │   scheduler_data.json
+│   │   security.rb
+│   │   SIMPLE_TEST.rb
+│   │   supabase_client.rb
+│   │   TEST_MATERIAL_EDGE_BANDING.rb
+│   │   update_system.rb
+│   │   util.rb
+│   │   WORKING_TEST.rb
+│   │
+│   ├───exporters
+│   │       diagram_generator.rb
+│   │       facade_reporter.rb
+│   │       report_generator.rb
+│   │
+│   ├───models
+│   │       board.rb
+│   │       cladding_preset.rb
+│   │       facade_surface.rb
+│   │       part.rb
+│   │
+│   ├───processors
+│   │       async_processor.rb
+│   │       component_cache.rb
+│   │       facade_analyzer.rb
+│   │       model_analyzer.rb
+│   │       nester.rb
+│   │
+│   ├───resources
+│   │       icon.png
+│   │
+│   ├───rgloader
+│   │       README
+│   │       rgloader.rb
+│   │       rgloader27.mingw.x64.so
+│   │       rgloader32.mingw.x64.so
+│   │       RubyEncoder Loader License.pdf
+│   │       rubyinstaller-3.2.2-1-x64.exe
+│   │
+│   └───ui
+│       │   dialog_manager.rb
+│       │   progress_dialog.rb
+│       │
+│       └───html
+│           │   app.js
+│           │   assembly_viewer.html
+│           │   assembly_viewer.js
+│           │   config.html
+│           │   diagrams_report.html
+│           │   diagrams_report.js
+│           │   diagrams_report_backup.js
+│           │   diagrams_report_v21.html
+│           │   diagrams_style.css
+│           │   documentation.html
+│           │   facade_config.html
+│           │   languages.js
+│           │   main.html
+│           │   purchase.html
+│           │   report.html
+│           │   resizer_fix.css
+│           │   resizer_fix.js
+│           │   scheduler.html
+│           │   style.css
+│           │
+│           └───images
+│                   diagram_example.JPG
+│                   kitchen_cabinets_model_showcase.JPG
+│
+├───DEV_FILES
+│   │   1.html
+│   │   1.pdf
+│   │   ADD_IMAGE_CALLBACK.rb
+│   │   CLEAN_LOAD.rb
+│   │   CLEAR_CACHE.rb
+│   │   DEV_RELOAD.rb
+│   │   DIRECT_LOAD.rb
+│   │   FINAL_FIX.rb
+│   │   FINAL_LOAD.rb
+│   │   FORCE_HTML_UPDATE.rb
+│   │   FORCE_RELOAD.rb
+│   │   FORCE_UPDATE.rb
+│   │   LAST_CHANCE.rb
+│   │   loader.rb
+│   │   loader_monitor.html
+│   │   MINIMAL_LOAD.rb
+│   │   POWER_LOADER.rb
+│   │   QUICK_FIX.rb
+│   │   RELOAD_FIXED.rb
+│   │   SAFE_RELOAD.rb
+│   │   SIMPLE_LOAD.rb
+│   │   test_emergency_bypass.rb
+│   │   user_loader.rb
+│   │   WORKING_LOAD.rb
+│   │   ww.pdf
+│   │
+│   └───temp_scripts
+│           autonestcut_stylesheet_updater.rb
+│           BRUTAL_FIX.rb
+│           CLEAN_LOAD_EXTENSION.rb
+│           COMPLETE_FIX.rb
+│           EMERGENCY_CLEANUP.rb
+│           FINAL_FIX.rb
+│           FINAL_RELOAD.rb
+│           FINAL_WORKING_FIX.rb
+│           FIXED_RELOAD.rb
+│           FIX_CLASS_NAMES.rb
+│           LIST_PLUGINS_FOLDER.rb
+│           load_extension.rb
+│           RELOAD_FIXED_V2.rb
+│           RESTORE_DOCUMENTATION.rb
+│           SIMPLE_RELOAD.rb
+│           TEST_CLASSES.rb
+│
+├───lib
+│   └───LicenseManager
+│           emergency_bypass.rb
+│           license_dialog.rb
+│           license_manager.rb
+│           purchase_page.html
+│           trial_manager.rb
+│
+└───vendor
+    │   jwt.rb
+    │
+    └───jwt
+        │   base64.rb
+        │   claims.rb
+        │   configuration.rb
+        │   decode.rb
+        │   encode.rb
+        │   encoded_token.rb
+        │   error.rb
+        │   json.rb
+        │   jwa.rb
+        │   jwk.rb
+        │   token.rb
+        │   version.rb
+        │   x5c_key_finder.rb
+        │
+        ├───claims
+        │       audience.rb
+        │       crit.rb
+        │       decode_verifier.rb
+        │       expiration.rb
+        │       issued_at.rb
+        │       issuer.rb
+        │       jwt_id.rb
+        │       not_before.rb
+        │       numeric.rb
+        │       required.rb
+        │       subject.rb
+        │       verifier.rb
+        │
+        ├───configuration
+        │       container.rb
+        │       decode_configuration.rb
+        │       jwk_configuration.rb
+        │
+        ├───jwa
+        │       ecdsa.rb
+        │       hmac.rb
+        │       none.rb
+        │       ps.rb
+        │       rsa.rb
+        │       signing_algorithm.rb
+        │       unsupported.rb
+        │
+        └───jwk
+                ec.rb
+                hmac.rb
+                key_base.rb
+                key_finder.rb
+                kid_as_key_digest.rb
+                rsa.rb
+                set.rb
+                thumbprint.rb
+
+-------------------------------------------------------
+
+
+
+the current active tree structure:
+
+PS C:\Users\Administrator\Desktop\AUTOMATION\cutlist\AutoNestCut\AutoNestCut_Clean_Workspace\Extension> tree /f
+Folder PATH listing
+Volume serial number is 409B-8587
+C:.
+│   MINIMAL_SCHEDULER_TEST.rb
+│   POWER_LOADER.rb
+│   RELOAD_FACADE-2.rb
+│   RELOAD_FACADE-3.rb
+│   RELOAD_SCHEDULER.rb
+│   TEST_FACADE_MENU.rb
+│   TEST_SCHEDULER_MENU.rb
+│
+├───AutoNestCut
+│   │   CLEAR_BROWSER_CACHE.rb
+│   │   CLEAR_CACHE_TEST.rb
+│   │   compatibility.rb
+│   │   config.rb
+│   │   FIXED_TEST_SCRIPT.rb
+│   │   FORCE_RELOAD.rb
+│   │   integrity_checker.rb
+│   │   license_hardening.rb
+│   │   main.rb
+│   │   main.rb.secured
+│   │   main_no_license.rb
+│   │   MANUAL_TEST.rb
+│   │   materials_database.rb
+│   │   RELOAD_EXTENSION.rb
+│   │   scheduler.rb
+│   │   scheduler_data.json
+│   │   security.rb
+│   │   SIMPLE_TEST.rb
+│   │   supabase_client.rb
+│   │   TEST_MATERIAL_EDGE_BANDING.rb
+│   │   update_system.rb
+│   │   util.rb
+│   │   WORKING_TEST.rb
+│   │
+│   ├───exporters
+│   │       diagram_generator.rb
+│   │       facade_reporter.rb
+│   │       report_generator.rb
+│   │
+│   ├───models
+│   │       board.rb
+│   │       cladding_preset.rb
+│   │       facade_surface.rb
+│   │       part.rb
+│   │
+│   ├───processors
+│   │       async_processor.rb
+│   │       component_cache.rb
+│   │       facade_analyzer.rb
+│   │       model_analyzer.rb
+│   │       nester.rb
+│   │
+│   ├───resources
+│   │       icon.png
+│   │
+│   ├───rgloader
+│   │       README
+│   │       rgloader.rb
+│   │       rgloader27.mingw.x64.so
+│   │       rgloader32.mingw.x64.so
+│   │       RubyEncoder Loader License.pdf
+│   │       rubyinstaller-3.2.2-1-x64.exe
+│   │
+│   └───ui
+│       │   dialog_manager.rb
+│       │   progress_dialog.rb
+│       │
+│       └───html
+│           │   app.js
+│           │   assembly_viewer.html
+│           │   assembly_viewer.js
+│           │   config.html
+│           │   diagrams_report.html
+│           │   diagrams_report.js
+│           │   diagrams_report_backup.js
+│           │   diagrams_report_v21.html
+│           │   diagrams_style.css
+│           │   documentation.html
+│           │   facade_config.html
+│           │   languages.js
+│           │   main.html
+│           │   purchase.html
+│           │   report.html
+│           │   resizer_fix.css
+│           │   resizer_fix.js
+│           │   scheduler.html
+│           │   style.css
+│           │
+│           ├───images
+│           │       diagram_example.JPG
+│           │       kitchen_cabinets_model_showcase.JPG
+│           │
+│           └───js
+│                   OrbitControls.js
+│
+├───DEV_FILES
+│   │   1.html
+│   │   1.pdf
+│   │   ADD_IMAGE_CALLBACK.rb
+│   │   CLEAN_LOAD.rb
+│   │   CLEAR_CACHE.rb
+│   │   DEV_RELOAD.rb
+│   │   DIRECT_LOAD.rb
+│   │   FINAL_FIX.rb
+│   │   FINAL_LOAD.rb
+│   │   FORCE_HTML_UPDATE.rb
+│   │   FORCE_RELOAD.rb
+│   │   FORCE_UPDATE.rb
+│   │   LAST_CHANCE.rb
+│   │   loader.rb
+│   │   loader_monitor.html
+│   │   MINIMAL_LOAD.rb
+│   │   POWER_LOADER.rb
+│   │   QUICK_FIX.rb
+│   │   RELOAD_FIXED.rb
+│   │   SAFE_RELOAD.rb
+│   │   SIMPLE_LOAD.rb
+│   │   test_emergency_bypass.rb
+│   │   user_loader.rb
+│   │   WORKING_LOAD.rb
+│   │   ww.pdf
+│   │
+│   └───temp_scripts
+│           autonestcut_stylesheet_updater.rb
+│           BRUTAL_FIX.rb
+│           CLEAN_LOAD_EXTENSION.rb
+│           COMPLETE_FIX.rb
+│           EMERGENCY_CLEANUP.rb
+│           FINAL_FIX.rb
+│           FINAL_RELOAD.rb
+│           FINAL_WORKING_FIX.rb
+│           FIXED_RELOAD.rb
+│           FIX_CLASS_NAMES.rb
+│           LIST_PLUGINS_FOLDER.rb
+│           load_extension.rb
+│           RELOAD_FIXED_V2.rb
+│           RESTORE_DOCUMENTATION.rb
+│           SIMPLE_RELOAD.rb
+│           TEST_CLASSES.rb
+│
+├───lib
+│   └───LicenseManager
+│           emergency_bypass.rb
+│           license_dialog.rb
+│           license_manager.rb
+│           purchase_page.html
+│           trial_manager.rb
+│
+└───vendor
+    │   jwt.rb
+    │
+    └───jwt
+        │   base64.rb
+        │   claims.rb
+        │   configuration.rb
+        │   decode.rb
+        │   encode.rb
+        │   encoded_token.rb
+        │   error.rb
+        │   json.rb
+        │   jwa.rb
+        │   jwk.rb
+        │   token.rb
+        │   version.rb
+        │   x5c_key_finder.rb
+        │
+        ├───claims
+        │       audience.rb
+        │       crit.rb
+        │       decode_verifier.rb
+        │       expiration.rb
+        │       issued_at.rb
+        │       issuer.rb
+        │       jwt_id.rb
+        │       not_before.rb
+        │       numeric.rb
+        │       required.rb
+        │       subject.rb
+        │       verifier.rb
+        │
+        ├───configuration
+        │       container.rb
+        │       decode_configuration.rb
+        │       jwk_configuration.rb
+        │
+        ├───jwa
+        │       ecdsa.rb
+        │       hmac.rb
+        │       none.rb
+        │       ps.rb
+        │       rsa.rb
+        │       signing_algorithm.rb
+        │       unsupported.rb
+        │
+        └───jwk
+                ec.rb
+                hmac.rb
+                key_base.rb
+                key_finder.rb
+                kid_as_key_digest.rb
+                rsa.rb
+                set.rb
+                thumbprint.rb
+
+
+ Focus with me very well. Below are two folder structures. For my extension, in two different versions. One of them which is the Backed up version of the extension and next below it you will find the actual current active extension tree structure. Means the one that I'm actually now using and this is the one that has problem and I need to fix. The backed up version was working without any problem. And I backed it up and suddenly things just went uh off root or off track and I just uh now unable to fix and manage the errors in the extension. For instance, I want my goal is to restore the extension

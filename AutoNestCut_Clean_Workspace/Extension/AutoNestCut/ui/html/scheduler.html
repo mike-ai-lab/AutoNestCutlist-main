@@ -13,10 +13,10 @@
         .form-group { margin-bottom: 10px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select { width: 100%; padding: 5px; }
-        .btn { padding: 8px 16px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
-        .btn:hover { background: #005a87; }
+        .btn { padding: 8px 16px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; display: inline-flex; align-items: center; transition: all 0.2s ease; }
+        .btn:hover { background: #005a87; transform: translateY(-1px); }
         .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
+        .btn-danger:hover { background: #c82333; transform: translateY(-1px); }
     </style>
 </head>
 <body>
@@ -49,7 +49,13 @@
                 <label>Material Filter (optional):</label>
                 <input type="text" id="materialFilter" placeholder="Plywood">
             </div>
-            <button class="btn" onclick="addTask()">Add Task</button>
+            <button class="btn" onclick="addTask()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Task
+            </button>
         </div>
         
         <div class="task-list">
@@ -102,7 +108,13 @@
                     Format: ${task.format.toUpperCase()}<br>
                     Email: ${task.email}<br>
                     Next run: ${new Date(task.next_run * 1000).toLocaleString()}<br>
-                    <button class="btn btn-danger" onclick="deleteTask('${task.id}')">Delete</button>
+                    <button class="btn btn-danger" onclick="deleteTask('${task.id}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                            <polyline points="3,6 5,6 21,6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete
+                    </button>
                 </div>
             `).join('');
         }

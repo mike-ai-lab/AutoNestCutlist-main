@@ -53,15 +53,28 @@
             font-size: 12px;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         button:hover {
             filter: brightness(1.1);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
         }
 
         button:active {
             filter: brightness(0.95);
+            transform: translateY(0);
+        }
+        
+        button svg {
+            transition: transform 0.2s ease;
+        }
+        
+        button:hover svg {
+            transform: scale(1.1);
         }
 
         .container {
@@ -267,11 +280,37 @@
 </head>
 <body>
     <div class="header">
-        <h1>🔧 3D Assembly Viewer [v2.0-UPDATED]</h1>
+        <h1>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px; vertical-align: middle;">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            3D Assembly Viewer [v2.7.0]
+        </h1>
         <div class="header-controls">
-            <button onclick="resetView()">Reset View</button>
-            <button onclick="toggleWireframe()">Wireframe</button>
-            <button onclick="window.close()">Close</button>
+            <button onclick="resetView()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                    <path d="M3 21v-5h5"/>
+                </svg>
+                Reset View
+            </button>
+            <button onclick="toggleWireframe()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                    <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+                Wireframe
+            </button>
+            <button onclick="window.close()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                Close
+            </button>
         </div>
     </div>
 

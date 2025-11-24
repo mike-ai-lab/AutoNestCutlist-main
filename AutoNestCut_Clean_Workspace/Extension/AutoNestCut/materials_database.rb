@@ -23,7 +23,7 @@ module AutoNestCut
           'height' => row['height'].to_f,
           'thickness' => (row['thickness'] || 18).to_f,
           'price' => row['price'].to_f,
-          'currency' => row['currency'] || 'USD'
+          'currency' => row['currency'] || 'USD' # Still load currency if present, but UI now only uses default
         }
       end
       materials
@@ -37,13 +37,15 @@ module AutoNestCut
       CSV.open(database_file, 'w') do |csv|
         csv << ['name', 'width', 'height', 'thickness', 'price', 'currency']
         materials.each do |name, data|
+          # Retrieve the default currency from settings to save with materials
+          default_currency = Config.get_cached_settings['default_currency'] || 'USD'
           csv << [
             name,
             data['width'] || 2440,
             data['height'] || 1220,
             data['thickness'] || 18,
             data['price'] || 0,
-            data['currency'] || 'USD'
+            data['currency'] || default_currency # Use individual material currency if present, else global default
           ]
         end
       end
@@ -59,11 +61,14 @@ module AutoNestCut
         name = row['name'] || row['material'] || row['Material']
         next unless name
         
+        # When importing, use global default currency if not specified in CSV
+        default_currency = Config.get_cached_settings['default_currency'] || 'USD'
         materials[name] = {
           'width' => (row['width'] || row['Width'] || 2440).to_f,
           'height' => (row['height'] || row['Height'] || 1220).to_f,
+          'thickness' => (row['thickness'] || row['Thickness'] || 18).to_f, # Ensure thickness is imported
           'price' => (row['price'] || row['Price'] || 0).to_f,
-          'currency' => row['currency'] || row['Currency'] || 'USD',
+          'currency' => row['currency'] || row['Currency'] || default_currency,
           'supplier' => row['supplier'] || row['Supplier'] || '',
           'notes' => row['notes'] || row['Notes'] || ''
         }
@@ -75,17 +80,22 @@ module AutoNestCut
     end
     
     def self.get_default_materials
+      # Use global default currency for default materials too
+      default_currency = Config.get_cached_settings['default_currency'] || 'USD'
       {
-        'Plywood_19mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 19, 'price' => 45, 'currency' => 'USD' },
-        'Plywood_12mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 12, 'price' => 35, 'currency' => 'USD' },
-        'MDF_16mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 16, 'price' => 25, 'currency' => 'USD' },
-        'MDF_19mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 19, 'price' => 30, 'currency' => 'USD' },
-        'Oak_Veneer' => { 'width' => 2440, 'height' => 1220, 'thickness' => 18, 'price' => 85, 'currency' => 'USD' },
-        'Melamine_White' => { 'width' => 2440, 'height' => 1220, 'thickness' => 18, 'price' => 40, 'currency' => 'USD' }
+        'Plywood_19mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 19, 'price' => 45, 'currency' => default_currency },
+        'Plywood_12mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 12, 'price' => 35, 'currency' => default_currency },
+        'MDF_16mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 16, 'price' => 25, 'currency' => default_currency },
+        'MDF_19mm' => { 'width' => 2440, 'height' => 1220, 'thickness' => 19, 'price' => 30, 'currency' => default_currency },
+        'Oak_Veneer' => { 'width' => 2440, 'height' => 1220, 'thickness' => 18, 'price' => 85, 'currency' => default_currency },
+        'Melamine_White' => { 'width' => 2440, 'height' => 1220, 'thickness' => 18, 'price' => 40, 'currency' => default_currency }
       }
     end
     
+    # This method is for backend internal use. Frontend uses global currencySymbols.
     def self.get_supported_currencies
+      # Keeping a comprehensive list, but UI only shows a subset.
+      # This is useful for CSV import/export validation or future features.
       {
         'USD' => '$',
         'EUR' => '€',

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AutoNestCut Report</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="diagrams_style.css">
+    <!-- Load Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load OrbitControls.js from your local 'js' subfolder -->
+    <script src="js/OrbitControls.js" type="module"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Report Header with settings indicators and action buttons -->
+        <div id="reportHeader" class="report-header">
+            <div class="settings-display">
+                <span class="setting-item">Units: <strong id="headerUnits">N/A</strong></span>
+                <span class="setting-item">Precision: <strong id="headerPrecision">N/A</strong></span>
+                <span class="setting-item">Currency: <strong id="headerCurrency">N/A</strong></span>
+                <span class="setting-item">Area Unit: <strong id="headerAreaUnit">N/A</strong></span>
+            </div>
+            <div class="report-actions">
+                <button id="refreshReportButton" class="action-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px; vertical-align:middle; margin-right:5px;"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.5M22 12.5a10 10 0 0 1-18.8 4.5"/></svg>
+                    Refresh Report
+                </button>
+                <button id="showTreeStructureButton" class="action-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px; vertical-align:middle; margin-right:5px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-3 3a5 5 0 0 0-.54 7.54Z"/><path d="M14 11a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/><path d="M1.96 17.78a5.5 5.5 0 0 0 8.01 0"/><path d="M1.96 17.78A5.5 5.5 0 0 1 8 13"/></svg>
+                    Show Tree
+                </button>
+                <button id="copyMarkdownButton" class="action-button" title="Copy Full Report as Markdown">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px; height:16px; vertical-align:middle; margin-right:5px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                    Copy Full Report
+                </button>
+            </div>
+        </div>
+
+        <div class="content"> <!-- This is the flex container for the left and right panels -->
+            <div id="diagramsPanel" class="left-panel">
+                <div id="diagramsContainer">
+                    <!-- Diagrams will be rendered here -->
+                </div>
+            </div>
+
+            <div id="resizer" class="resizer"></div>
+
+            <div id="reportPanel" class="right-panel">
+                <div id="reportContainer">
+                    <section class="report-section">
+                        <div class="section-header">
+                            <h2>Overall Summary</h2>
+                        </div>
+                        <table id="summaryTable" class="report-table">
+                            <!-- Summary data will be inserted here -->
+                        </table>
+                    </section>
+
+                    <section class="report-section">
+                        <div class="section-header">
+                            <h2>Unique Part Types
+                                <button class="copy-table-button" onclick="copyTableAsMarkdown('uniquePartTypesTable', this)" title="Copy table as Markdown">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                    <span class="visually-hidden">Copy Unique Part Types Table</span>
+                                </button>
+                            </h2>
+                        </div>
+                        <table id="uniquePartTypesTable" class="report-table">
+                            <!-- Unique part types data will be inserted here -->
+                        </table>
+                    </section>
+
+                    <section class="report-section">
+                        <div class="section-header">
+                            <h2>Sheet Inventory Summary
+                                <button class="copy-table-button" onclick="copyTableAsMarkdown('sheetInventoryTable', this)" title="Copy table as Markdown">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                    <span class="visually-hidden">Copy Sheet Inventory Table</span>
+                                </button>
+                            </h2>
+                        </div>
+                        <table id="sheetInventoryTable" class="report-table">
+                            <!-- Sheet inventory data will be inserted here -->
+                        </table>
+                    </section>
+                    
+                    <section class="report-section">
+                        <div class="section-header">
+                            <h2>All Parts List
+                                <button class="copy-table-button" onclick="copyTableAsMarkdown('partsTable', this)" title="Copy table as Markdown">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                                    <span class="visually-hidden">Copy All Parts List Table</span>
+                                </button>
+                            </h2>
+                        </div>
+                        <table id="partsTable" class="report-table">
+                            <!-- All parts list data will be inserted here -->
+                        </table>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Part Details Modal (Existing) -->
+    <div id="partModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="document.getElementById('partModal').style.display='none';">×</span>
+            <div class="modal-body">
+                <div class="modal-left">
+                    <canvas id="modalCanvas" width="400" height="400"></canvas>
+                    <div class="modal-controls">
+                        <button id="projectionToggle">Orthographic</button>
+                    </div>
+                </div>
+                <div class="modal-right">
+                    <div id="modalInfo"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tree Structure Modal -->
+    <div id="treeStructureModal" class="modal">
+        <div class="modal-content tree-modal-content">
+            <span class="close-button" onclick="document.getElementById('treeStructureModal').style.display='none';">×</span>
+            <h2>Component Hierarchy Tree</h2>
+            <div id="treeSearchContainer" style="display: flex; margin-bottom: 15px; gap: 10px;">
+                <input type="text" id="treeSearch" placeholder="Search components..." onkeyup="filterTree()">
+                <button onclick="clearTreeSearch()" class="action-button small">Clear</button>
+                <button onclick="expandAll()" class="action-button small">Expand All</button>
+                <button onclick="collapseAll()" class="action-button small">Collapse All</button>
+            </div>
+            <div id="treeStructure" class="tree-container">
+                <!-- Tree will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTANT: app.js IS NO LONGER LOADED IN main.html -->
+    <!-- It should only be loaded by config.html for its specific logic. -->
+    
+    <!-- Load diagrams_report.js with a cache-busting query parameter -->
+    <script src="diagrams_report.js?v=<%= Time.now.to_i %>"></script>
+    <script>
+        // Initial setup/load after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initResizer(); // Initialize the resizer
+            // Inform Ruby that the frontend is ready to receive data
+            callRuby('ready'); 
+        });
+        
+        // Add event listener for the new refresh button
+        document.getElementById('refreshReportButton').addEventListener('click', () => {
+            callRuby('refreshReport'); // Call Ruby method to refresh the report
+        });
+
+        // Add event listener for the show tree structure button
+        document.getElementById('showTreeStructureButton').addEventListener('click', () => {
+            openTreeStructureModal();
+        });
+    </script>
+</body>
+</html>

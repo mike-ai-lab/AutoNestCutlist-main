@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AutoNestCut</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="diagrams_style.css">
+    <link rel="stylesheet" href="resizer_fix.css">
+    <style>
+        .currency-conversion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .currency-conversion label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .currency-conversion select,
+        .currency-conversion input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .currency-conversion button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .currency-conversion button:hover {
+            background: #005a87;
+        }
+        .icon-btn {
+            padding: 5px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-btn:hover {
+            background: #005a87;
+        }
+        #settingsModal {
+            z-index: 1000;
+        }
+        #settingsModal .modal-content {
+            z-index: 1001;
+        }
+    </style>
+    <script src="languages.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 data-translate="app_title">AutoNestCut</h1>
+            <p class="developer-credit" data-translate="developer_credit">Developed by: Int. Arch. M.Shkeir</p>
+        </div>
+        <div class="header-controls">
+            <button class="settings-btn" onclick="openSettings()" title="Settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <div class="action-buttons">
+                <button class="tab-button" onclick="processNesting()" data-translate="generate_cut_list">Generate Cut List</button>
+                <button class="tab-button" onclick="refreshConfiguration()" data-translate="refresh_selection">Refresh Selection</button>
+                <button class="tab-button" onclick="window.close()" data-translate="cancel">Cancel</button>
+                <button class="tab-button" id="refreshReportButton" onclick="refreshReportWithFeedback()" data-translate="refresh_report" style="display: none;">Refresh</button>
+                <button class="tab-button" id="printButton" data-translate="print_save_pdf" style="display: none;">PDF</button>
+                <button class="tab-button" id="exportCsvButton" data-translate="export_csv_report" style="display: none;">CSV</button>
+                <button class="tab-button" id="exportHtmlButton" data-translate="export_interactive_html" style="display: none;">HTML</button>
+            </div>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('config')" data-translate="configuration">Configuration</button>
+                <button class="tab-button" id="reportTab" onclick="showTab('report')" disabled data-translate="report">Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Tab -->
+    <div id="configTab" class="tab-content active">
+        <div class="config-container">
+
+            
+            <div class="section">
+                <h2 data-translate="general_settings">General Settings</h2>
+                <div class="form-group">
+                    <label for="kerf_width" data-translate="kerf_width">Kerf Width (mm):</label>
+                    <input type="number" id="kerf_width" name="kerf_width" step="0.1" min="0" max="10">
+                </div>
+                <div class="form-group">
+                    <label for="allow_rotation">
+                        <input type="checkbox" id="allow_rotation" name="allow_rotation"> <span data-translate="allow_rotation">Allow part rotation</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 data-translate="stock_materials_pricing">Stock Materials & Pricing</h2>
+                <div class="materials-controls-single-row" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button type="button" onclick="addMaterial()" class="material-icon-btn">Add</button>
+                    <button type="button" onclick="loadDefaults()" class="material-icon-btn">Defaults</button>
+                    <button type="button" onclick="importCSV()" class="material-icon-btn">Import CSV</button>
+                    <button type="button" onclick="exportDatabase()" class="material-icon-btn">Export DB</button>
+                    <button type="button" id="foldToggle" onclick="toggleFold()" class="material-icon-btn">Used Only</button>
+                    <button type="button" onclick="clearHighlight()" class="material-icon-btn">Clear</button>
+                    <select id="sortBy" onchange="displayMaterials()" class="sort-select">
+                        <option value="alphabetical">Sort: A-Z</option>
+                        <option value="usage">Sort: Used First</option>
+                        <option value="mostUsed">Sort: Most Used</option>
+                    </select>
+                    <select id="defaultCurrency" onchange="updateDefaultCurrency()" class="sort-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="SAR">SAR (ر.س)</option>
+                        <option value="AED">AED (د.إ)</option>
+                    </select>
+                </div>
+                <div class="materials-header">
+                    <span data-translate="material_name">Material Name</span>
+                    <span data-translate="width_mm">Width (mm)</span>
+                    <span data-translate="height_mm">Height (mm)</span>
+                    <span data-translate="thickness_mm">Thickness (mm)</span>
+                    <span data-translate="price">Price</span>
+                    <span data-translate="currency">Currency</span>
+                    <span data-translate="actions">Actions</span>
+                    <span data-translate="status">Status</span>
+                </div>
+                <div id="materials_list" class="materials-list"></div>
+            </div>
+            
+            <div class="section">
+                <h2 data-translate="parts_preview">Parts Preview</h2>
+                <div id="parts_preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Tab -->
+    <div id="reportTabContent" class="tab-content">
+
+
+        <div class="container">
+            <div id="diagramsContainer" class="diagrams-container">
+                <h2 data-translate="diagrams">Diagrams</h2>
+                <p>Generate a report to view diagrams...</p>
+            </div>
+            <div class="resizer" id="resizer"></div>
+            <div id="reportContainer" class="report-container">
+                <div class="report-title">
+                    <h2 data-translate="report_details">Report Details</h2>
+                </div>
+                
+                <div class="project-info">
+                    <div class="project-field">
+                        <label for="projectName" data-translate="project_name">Project Name:</label>
+                        <input type="text" id="projectName" name="projectName" data-translate="enter_project_name" placeholder="Enter project name">
+                    </div>
+                    <div class="project-field">
+                        <label for="projectAddress" data-translate="address">Address:</label>
+                        <input type="text" id="projectAddress" name="projectAddress" data-translate="enter_project_address" placeholder="Enter project address">
+                    </div>
+                    <div class="project-field">
+                        <label for="projectDate" data-translate="date">Date:</label>
+                        <input type="date" id="projectDate" name="projectDate">
+                    </div>
+                </div>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="materials_used">Materials Used</h2>
+                <div id="materialsContainer"></div>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="overall_summary">Overall Summary</h2>
+                <table id="summaryTable"></table>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="unique_part_types">Unique Part Types</h2>
+                <table id="uniquePartTypesTable"></table>
+
+                <div class="section-separator"></div>
+                <h2>Sheet Inventory Summary</h2>
+                <table id="sheetInventoryTable"></table>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="boards_summary">Boards Summary</h2>
+                <table id="boardsTable"></table>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="cost_breakdown">Cost Breakdown</h2>
+                <div id="costBreakdownContainer" class="cost-breakdown-wrapper"></div>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="parts_placed_detailed">Cut List & Part Details</h2>
+                <div class="tree-controls">
+                    <button type="button" id="treeToggle" onclick="toggleTreeView()" data-translate="show_tree_structure">Show Tree Structure</button>
+                    <div class="tree-search" id="treeSearchContainer" style="display: none;">
+                        <input type="text" id="treeSearch" data-translate="search_components" placeholder="Search components..." oninput="filterTree()">
+                        <button type="button" onclick="clearTreeSearch()" data-translate="clear">Clear</button>
+                        <button type="button" onclick="expandAll()">Expand All</button>
+                        <button type="button" onclick="collapseAll()">Collapse All</button>
+                    </div>
+                </div>
+                <div id="treeStructure" class="tree-structure" style="display: none;"></div>
+                <table id="partsTable"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSettings()">&times;</span>
+
+            <div class="settings-section">
+                <h3>Units</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsUnits" class="sort-select">
+                        <option value="mm">Millimeters (mm)</option>
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="in">Inches (in)</option>
+                        <option value="ft">Feet (ft)</option>
+                    </select>
+                    <button onclick="updateUnits()" class="icon-btn" title="Update Units">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Precision</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsPrecision" class="sort-select">
+                        <option value="0">0</option>
+                        <option value="1">0.0</option>
+                        <option value="2">0.00</option>
+                        <option value="3">0.000</option>
+                    </select>
+                    <button onclick="updatePrecision()" class="icon-btn" title="Update Precision">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Area Units</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsAreaUnits" class="sort-select">
+                        <option value="mm2">Square Millimeters (mm²)</option>
+                        <option value="cm2">Square Centimeters (cm²)</option>
+                        <option value="m2">Square Meters (m²)</option>
+                        <option value="in2">Square Inches (in²)</option>
+                        <option value="ft2">Square Feet (ft²)</option>
+                    </select>
+                    <button onclick="updateAreaUnits()" class="icon-btn" title="Update Area Units">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Default Currency</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsCurrency" class="sort-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="SAR">SAR (ر.س)</option>
+                        <option value="AED">AED (د.إ)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                    <button onclick="updateCurrency()" class="icon-btn" title="Update Currency">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                            <path d="M21 3v5h-5"></path>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                            <path d="M3 21v-5h5"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-buttons">
+                <button onclick="closeSettings()" class="primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged part view -->
+    <div id="partModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-controls">
+                <button id="projectionToggle">Orthographic</button>
+            </div>
+            <canvas id="modalCanvas" width="500" height="400"></canvas>
+            <div id="modalInfo"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+    <script src="diagrams_report.js"></script>
+    <script src="resizer_fix.js"></script>
+    <script>
+        let currentReportData = null;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tabs .tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            const actionButtons = document.querySelectorAll('.action-buttons .tab-button');
+            actionButtons.forEach(btn => {
+                if (tabName === 'config') {
+                    if (btn.id && (btn.id.includes('Report') || btn.id.includes('Button'))) {
+                        btn.style.display = 'none';
+                    } else {
+                        btn.style.display = 'inline-block';
+                    }
+                } else if (tabName === 'report') {
+                    if (btn.id && (btn.id.includes('Report') || btn.id.includes('Button'))) {
+                        btn.style.display = 'inline-block';
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                }
+            });
+            
+            if (tabName === 'config') {
+                document.getElementById('configTab').classList.add('active');
+            } else if (tabName === 'report') {
+                document.getElementById('reportTabContent').classList.add('active');
+            }
+            document.querySelector(`.tabs [onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        function showReportTab(data) {
+            console.log('showReportTab called with data:', data);
+            
+            document.getElementById('reportTab').disabled = false;
+            currentReportData = data;
+            
+            // Ensure data structure is correct
+            if (data && data.diagrams && data.report) {
+                g_boardsData = data.diagrams;
+                g_reportData = data.report;
+                window.originalComponents = data.original_components || [];
+                window.hierarchyTree = data.hierarchy_tree || [];
+                
+                console.log('Report data loaded:', g_reportData);
+                console.log('Boards data loaded:', g_boardsData);
+                
+                // Set current date as default
+                const projectDateEl = document.getElementById('projectDate');
+                if (projectDateEl) {
+                    projectDateEl.value = new Date().toISOString().split('T')[0];
+                }
+                
+                // Render with delay to ensure DOM is ready
+                setTimeout(() => {
+                    if (typeof renderDiagrams === 'function') {
+                        console.log('Calling renderDiagrams');
+                        renderDiagrams();
+                    }
+                    if (typeof renderReport === 'function') {
+                        console.log('Calling renderReport');
+                        renderReport();
+                    }
+                }, 100);
+                
+                showTab('report');
+                
+                // Initialize export button event listeners only once
+                initializeExportButtons();
+                
+                // Re-initialize resizer after showing report tab
+                setTimeout(() => {
+                    resizerInitialized = false;
+                    initResizer();
+                }, 200);
+            } else {
+                console.error('Invalid data structure received:', data);
+                alert('Error: Invalid report data received. Please try generating the report again.');
+            }
+        }
+        
+        let exportButtonsInitialized = false;
+        
+        function initializeExportButtons() {
+            if (exportButtonsInitialized) return;
+            
+            const printBtn = document.getElementById('printButton');
+            const exportCsvBtn = document.getElementById('exportCsvButton');
+            const exportHtmlBtn = document.getElementById('exportHtmlButton');
+            
+            if (printBtn) {
+                printBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    exportToPDF();
+                });
+            }
+            
+            if (exportCsvBtn) {
+                exportCsvBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentReportData && currentReportData.report) {
+                        callRuby('export_csv', JSON.stringify(currentReportData.report));
+                    } else {
+                        alert('No report data available for export.');
+                    }
+                });
+            }
+            
+            if (exportHtmlBtn) {
+                exportHtmlBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof exportInteractiveHTML === 'function') {
+                        exportInteractiveHTML();
+                    } else {
+                        alert('HTML export feature is not available.');
+                    }
+                });
+            }
+            
+            exportButtonsInitialized = true;
+        }
+        
+        function exportToPDF() {
+            const modelName = document.title || 'Untitled';
+            const timestamp = new Date().toISOString().slice(0,10);
+            const filename = `AutoNestCut_Report_${modelName.replace(/[^\w]/g, '_')}_${timestamp}`;
+            
+            document.title = filename;
+            window.print();
+        }
+
+        function showError(message) {
+            console.error('Error:', message);
+            alert(message);
+        }
+        
+
+        
+        function refreshConfiguration() {
+            callRuby('refresh_config');
+        }
+        
+        function refreshReport() {
+            callRuby('refresh_report');
+        }
+        
+        function refreshReportWithFeedback() {
+            refreshReport();
+        }
+        
+        function receiveRefreshedData(data) {
+            // Update the configuration with refreshed data
+            receiveInitialData(data);
+        }
+        
+        function refreshReportWithCurrentSettings() {
+            // Get current settings from the form
+            const settings = getCurrentSettings();
+            if (settings) {
+                // Re-process with current settings
+                callRuby('process', JSON.stringify(settings));
+            }
+        }
+        
+        function showConfigTab() {
+            showTab('config');
+        }
+        
+        let showTreeView = false;
+        
+        function toggleTreeView() {
+            showTreeView = !showTreeView;
+            const button = document.getElementById('treeToggle');
+            const treeContainer = document.getElementById('treeStructure');
+            const searchContainer = document.getElementById('treeSearchContainer');
+            
+            if (showTreeView) {
+                button.textContent = 'Hide Tree Structure';
+                treeContainer.style.display = 'block';
+                searchContainer.style.display = 'flex';
+            } else {
+                button.textContent = 'Show Tree Structure';
+                treeContainer.style.display = 'none';
+                searchContainer.style.display = 'none';
+            }
+        }
+        
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const modal = document.getElementById('partModal');
+            const closeBtn = document.querySelector('.close');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Initialize resizer with a delay to ensure DOM is ready
+            setTimeout(() => {
+                initResizer();
+            }, 100);
+            callRuby('ready');
+        });
+    </script>
+</body>
+</html>

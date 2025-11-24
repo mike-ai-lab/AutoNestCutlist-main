@@ -1,0 +1,409 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+    overflow: hidden; /* Prevent body scroll, container manages it */
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; /* Ensure content inside panels scrolls, not the container */
+}
+
+.left-panel, .right-panel {
+    flex-grow: 1;
+    overflow-y: auto; /* Enable scrolling for content within panels */
+    padding: 10px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.left-panel {
+    min-width: 400px; /* Minimum width for diagrams */
+    max-width: calc(100% - 400px); /* Max width to leave space for right panel */
+    border-right: 1px solid #ddd;
+}
+
+.right-panel {
+    min-width: 400px; /* Minimum width for report tables */
+    flex-shrink: 0; /* Prevent right panel from shrinking too much */
+}
+
+.resizer {
+    width: 8px;
+    background-color: #ccc;
+    cursor: col-resize;
+    flex-shrink: 0;
+}
+
+/* NEW: Report Header Styles */
+.report-header {
+    background-color: #e9eef2;
+    padding: 10px 20px;
+    border-bottom: 1px solid #d4d8de;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    color: #555;
+    flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+    gap: 10px; /* Space between items */
+    position: sticky; /* Keep header visible when scrolling */
+    top: 0;
+    z-index: 100; /* Ensure it stays above other content */
+    width: 100%;
+    box-sizing: border-box;
+}
+.report-header .settings-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 25px; /* Row and column gap */
+}
+.report-header .setting-item {
+    white-space: nowrap; /* Prevent breaking on small screens */
+}
+.report-header .setting-item strong {
+    color: #333;
+    font-weight: bold;
+}
+.report-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+.action-button:hover {
+    background-color: #45a049;
+}
+
+.action-button svg {
+    margin-right: 5px;
+}
+
+.action-button.small {
+    padding: 5px 8px;
+    font-size: 0.8em;
+}
+
+
+/* Section Headers and Copy Buttons */
+.section-header {
+    position: relative; /* Crucial for absolute positioning of copy button */
+    display: flex; /* Helps align title and button */
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.section-header h2 {
+    flex-grow: 1; /* Allow h2 to take available space */
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.copy-table-button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+    color: #555;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 10px; /* Give some space from the title */
+}
+
+.copy-table-button:hover {
+    background-color: #f0f0f0;
+    border-color: #aaa;
+    color: #333;
+}
+
+.copy-table-button svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+}
+
+/* Visually hidden for accessibility (screen readers) */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Table Styling - ALL LEFT ALIGNED */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+}
+
+.report-table th, .report-table td {
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left; /* Force left alignment */
+    vertical-align: top;
+    font-size: 0.9em;
+}
+
+.report-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+    color: #555;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+
+.report-table tbody tr:hover {
+    background-color: #f0f8ff;
+}
+
+.total-highlight {
+    font-weight: bold;
+    color: #2e8b57; /* A nice green color for totals */
+}
+
+.cost-indicator {
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    color: white;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+}
+
+.part-id-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.2s;
+}
+
+.part-id-btn:hover {
+    background-color: #0056b3;
+}
+
+
+/* Diagrams Container and Cards */
+#diagramsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* Center cards if there are few */
+    align-items: flex-start; /* Align cards to the top */
+}
+
+.diagram-card {
+    background-color: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 15px;
+    text-align: center;
+    width: calc(50% - 20px); /* Two cards per row, adjust for gap */
+    max-width: 650px; /* Max width for single card */
+    min-width: 300px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content within card */
+}
+
+@media (max-width: 1000px) {
+    .diagram-card {
+        width: calc(100% - 20px); /* One card per row on smaller screens */
+    }
+}
+
+.diagram-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.diagram-canvas {
+    border: 1px dashed #ccc;
+    background-color: #fcfcfc;
+    margin-top: 10px;
+    max-width: 100%; /* Ensure canvas doesn't overflow card */
+    height: auto;
+}
+
+/* Part Details Modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 200; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more specific, e.g., max-width: 900px */
+    max-width: 900px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.modal-body {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.modal-left {
+    flex: 1;
+    min-width: 300px; /* Minimum width for canvas */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-right {
+    flex: 1;
+    min-width: 250px;
+}
+
+#modalCanvas {
+    background-color: #e0e0e0;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    display: block; /* Ensure canvas takes full width if needed */
+}
+
+.modal-controls {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* NEW: Tree Structure Modal specific styles */
+.tree-modal-content {
+    max-width: 600px;
+    max-height: 80vh; /* Max height for scrollable content */
+    display: flex;
+    flex-direction: column;
+}
+
+.tree-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Allow tree to scroll if too long */
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fdfdfd;
+}
+
+.tree-view {
+    font-size: 0.9em;
+    line-height: 1.6;
+}
+
+.tree-node {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    cursor: pointer;
+}
+
+.tree-node:hover {
+    background-color: #f0f0f0;
+}
+
+.tree-expand {
+    margin-right: 5px;
+    font-weight: bold;
+    width: 15px; /* Fixed width for consistent alignment */
+    text-align: center;
+    user-select: none;
+}
+
+.tree-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.tree-info {
+    color: #777;
+    margin-left: 8px;
+}
+
+.tree-children {
+    display: block; /* Initially visible, can be toggled */
+    margin-left: 20px; /* Indent children */
+    border-left: 1px solid #eee; /* Visual indicator for hierarchy */
+    padding-left: 5px;
+}
+
+/* Tree Search Container */
+#treeSearch {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+}

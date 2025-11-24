@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Color Palette Example</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    padding: 20px;
+  }
+  .palette {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .swatch {
+    width: 100px;
+    height: 100px;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    border: 2px solid #ccc;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: #000;
+    font-size: 12px;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .swatch:hover {
+    transform: scale(1.1);
+  }
+  .swatch span {
+    background: rgba(255,255,255,0.7);
+    padding: 2px 4px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .tooltip {
+    visibility: hidden;
+    width: 180px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 6px;
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10;
+  }
+  .swatch:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<h2>Extension Color Palette</h2>
+<div class="palette">
+  <div class="swatch" style="background:#e6e6e6;">
+    <span>Apple Silver</span>
+    <div class="tooltip">(a.k.a

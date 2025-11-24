@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AutoNestCut</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="diagrams_style.css">
+    <link rel="stylesheet" href="resizer_fix.css">
+    <style>
+        .currency-conversion {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .currency-conversion label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .currency-conversion select,
+        .currency-conversion input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .currency-conversion button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .currency-conversion button:hover {
+            background: #005a87;
+        }
+        /* Icon button specific styling, ensure it's clean and consistent */
+        .icon-btn, .material-icon-btn {
+            padding: 5px; /* Adjust padding as needed for icon size */
+            background: #ffffff; /* Default background */
+            color: #24292e; /* Default icon color */
+            border: 1px solid #d0d7de; /* Default border */
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .icon-btn:hover, .material-icon-btn:hover {
+            background: #f6f8fa;
+            border-color: #8c959f;
+        }
+        /* Override for header action buttons for primary blue look */
+        .header-controls .action-buttons .tab-button.icon-btn {
+            background: #007cba;
+            color: white;
+            border: none; /* No border for these primary action icons */
+        }
+        .header-controls .action-buttons .tab-button.icon-btn:hover {
+            background: #005a87;
+            border-color: transparent;
+        }
+        .icon-btn svg, .material-icon-btn svg {
+            stroke: currentColor; /* Ensure SVG uses button's text color */
+            stroke-width: 2;
+            width: 16px;
+            height: 16px;
+        }
+        #settingsModal {
+            z-index: 1000;
+        }
+        #settingsModal .modal-content {
+            z-index: 1001;
+        }
+    </style>
+    <script src="languages.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1 data-translate="app_title">AutoNestCut v2.7.0 - Lucide Icons</h1>
+            <p class="developer-credit" data-translate="developer_credit">Developed by: Int. Arch. M.Shkeir</p>
+        </div>
+        <div class="header-controls">
+            <button class="settings-btn" onclick="openSettings()" title="Settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m21-7h-6M7 5H1m21 7h-6M7 19H1"/>
+                </svg>
+            </button>
+            <div class="action-buttons">
+                <button class="tab-button" onclick="processNesting()" data-translate="generate_cut_list">Generate Cut List</button>
+                <button class="tab-button" onclick="refreshConfiguration()" data-translate="refresh_selection">Refresh Selection</button>
+                <button class="tab-button" onclick="window.close()" data-translate="cancel">Cancel</button>
+                <button class="tab-button icon-btn" id="refreshReportButton" onclick="refreshReportWithFeedback()" data-translate="refresh_report" style="display: none;" title="Refresh Report">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                        <path d="M3 21v-5h5"/>
+                    </svg>
+                </button>
+                <button class="tab-button icon-btn" id="printButton" data-translate="print_save_pdf" style="display: none;" title="Print / Save PDF">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 6,2 18,2 18,9"/>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                        <polyline points="6,14 6,22 18,22 18,14"/>
+                    </svg>
+                </button>
+                <button class="tab-button icon-btn" id="exportCsvButton" data-translate="export_csv_report" style="display: none;" title="Export CSV Report">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <line x1="10" y1="9" x2="8" y2="9"/>
+                    </svg>
+                </button>
+                <button class="tab-button icon-btn" id="exportHtmlButton" data-translate="export_interactive_html" style="display: none;" title="Export Interactive HTML">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                </button>
+                <button class="tab-button icon-btn" id="copyMarkdownButton" data-translate="copy_markdown_report" style="display: none;" title="Copy Markdown Report">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                        <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('config')" data-translate="configuration">Configuration</button>
+                <button class="tab-button" id="reportTab" onclick="showTab('report')" disabled data-translate="report">Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Tab -->
+    <div id="configTab" class="tab-content active">
+        <div class="config-container">
+            
+            <div class="section">
+                <h2 data-translate="general_settings">General Settings</h2>
+                <div class="form-group">
+                    <label for="kerf_width" data-translate="kerf_width">Kerf Width (mm):</label>
+                    <input type="number" id="kerf_width" name="kerf_width" step="0.1" min="0" max="10">
+                </div>
+                <div class="form-group">
+                    <label for="allow_rotation">
+                        <input type="checkbox" id="allow_rotation" name="allow_rotation"> <span data-translate="allow_rotation">Allow part rotation</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 data-translate="stock_materials_pricing">Stock Materials & Pricing</h2>
+                <div class="materials-controls-single-row" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button type="button" onclick="addMaterial()" class="material-icon-btn" title="Add Material">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    </button>
+                    <button type="button" onclick="loadDefaults()" class="material-icon-btn" title="Load Defaults">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>
+                    </button>
+                    <button type="button" onclick="importCSV()" class="material-icon-btn" title="Import CSV">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </button>
+                    <button type="button" onclick="exportDatabase()" class="material-icon-btn" title="Export Database">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <button type="button" id="foldToggle" onclick="toggleFold()" class="material-icon-btn" title="Toggle Used Materials Only">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    </button>
+                    <button type="button" onclick="clearHighlight()" class="material-icon-btn" title="Clear Highlight">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.67 1.33a2 2 0 0 0-2.83 0L13.5 6.67l-3.8-3.8a2 2 0 0 0-2.83 0L1.33 6.17a2 2 0 0 0 0 2.83l5.5 5.5c.39.39 1.02.39 1.41 0l3.8-3.8 5.83 5.83c.39.39 1.02.39 1.41 0l2.83-2.83a2 2 0 0 0 0-2.83z"/><path d="M2 19h10"/></svg>
+                    </button>
+                    <select id="sortBy" onchange="displayMaterials()" class="sort-select">
+                        <option value="alphabetical">Sort: A-Z</option>
+                        <option value="usage">Sort: Used First</option>
+                        <option value="mostUsed">Sort: Most Used</option>
+                    </select>
+                    <select id="defaultCurrency" onchange="updateDefaultCurrency()" class="sort-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="GBP">GBP (£)</option>
+                        <option value="SAR">SAR (ر.س)</option>
+                        <option value="AED">AED (د.إ)</option>
+                    </select>
+                </div>
+                <div class="materials-header">
+                    <span data-translate="material_name">Material Name</span>
+                    <span data-translate="width_mm">Width (mm)</span>
+                    <span data-translate="height_mm">Height (mm)</span>
+                    <span data-translate="thickness_mm">Thickness (mm)</span>
+                    <span data-translate="price">Price</span>
+                    <span data-translate="currency">Currency</span>
+                    <span data-translate="actions">Actions</span>
+                    <span data-translate="status">Status</span>
+                </div>
+                <div id="materials_list" class="materials-list"></div>
+            </div>
+            
+            <div class="section">
+                <h2 data-translate="parts_preview">Parts Preview</h2>
+                <div id="parts_preview"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Tab -->
+    <div id="reportTabContent" class="tab-content">
+        <div class="container">
+            <div id="diagramsContainer" class="diagrams-container">
+                <h2 data-translate="diagrams">Diagrams</h2>
+                <p>Generate a report to view diagrams...</p>
+            </div>
+            <div class="resizer" id="resizer"></div>
+            <div id="reportContainer" class="report-container">
+                <div class="report-title">
+                    <h2 data-translate="report_details">Report Details</h2>
+                </div>
+                
+                <div class="section-separator"></div>
+                <h2 data-translate="materials_used">Materials Used</h2>
+                <div id="materialsContainer"></div>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="overall_summary">Overall Summary</h2>
+                <table id="summaryTable"></table>
+
+                <div class="section-separator"></div>
+                <h2 data-translate="unique_part_types">Unique Part Types</h2>
+                <table id="uniquePartTypesTable"></table>
+
+                <div class="section-separator"></div>
+                <h2>Sheet Inventory Summary</h2>
+                <table id="sheetInventoryTable"></table>
+
+                <!-- Removed Cost Breakdown and its container as requested -->
+                <!-- The following section was removed:
+                <div class="section-separator"></div>
+                <h2 data-translate="cost_breakdown">Cost Breakdown</h2>
+                <div id="costBreakdownContainer" class="cost-breakdown-wrapper"></div>
+                -->
+
+                <div class="section-separator"></div>
+                <h2 data-translate="parts_placed_detailed">Cut List & Part Details</h2>
+                <div class="tree-controls">
+                    <button type="button" id="treeToggle" onclick="toggleTreeView()" data-translate="show_tree_structure">Show Tree Structure</button>
+                    <div class="tree-search" id="treeSearchContainer" style="display: none;">
+                        <input type="text" id="treeSearch" data-translate="search_components" placeholder="Search components..." oninput="filterTree()">
+                        <button type="button" onclick="clearTreeSearch()" data-translate="clear">Clear</button>
+                        <button type="button" onclick="expandAll()">Expand All</button>
+                        <button type="button" onclick="collapseAll()">Collapse All</button>
+                    </div>
+                </div>
+                <div id="treeStructure" class="tree-structure" style="display: none;"></div>
+                <table id="partsTable"></table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSettings()">&times;</span>
+
+            <div class="settings-section">
+                <h3>Units</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsUnits" class="sort-select">
+                        <option value="mm">Millimeters (mm)</option>
+                        <option value="cm">Centimeters (cm)</option>
+                        <option value="m">Meters (m)</option>
+                        <option value="in">Inches (in)</option>
+                        <option value="ft">Feet (ft)</option>
+                    </select>
+                    <button onclick="updateUnits()" class="icon-btn" title="Update Units">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M3 21v-5h5"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Precision</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsPrecision" class="sort-select">
+                        <option value="0">0</option>
+                        <option value="1">0.0</option>
+                        <option value="2">0.00</option>
+                        <option value="3">0.000</option>
+                    </select>
+                    <button onclick="updatePrecision()" class="icon-btn" title="Update Precision">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M3 21v-5h5"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Area Units</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsAreaUnits" class="sort-select">
+                        <option value="mm2">Square Millimeters (mm²)</option>
+                        <option value="cm2">Square Centimeters (cm²)</option>
+                        <option value="m2">Square Meters (m²)</option>
+                        <option value="in2">Square Inches (in²)</option>
+                        <option value="ft2">Square Feet (ft²)</option>
+                    </select>
+                    <button onclick="updateAreaUnits()" class="icon-btn" title="Update Area Units">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M3 21v-5h5"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Default Currency</h3>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <select id="settingsCurrency" class="sort-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                        <option value="SAR">SAR (ر.س)</option>
+                        <option value="AED">AED (د.إ)</option>
+                        <option value="GBP">GBP (£)</option>
+                    </select>
+                    <button onclick="updateCurrency()" class="icon-btn" title="Update Currency">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                            <path d="M3 21v-5h5"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="settings-buttons">
+                <button onclick="closeSettings()" class="primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for enlarged part view -->
+    <div id="partModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-controls">
+                <button id="projectionToggle">Orthographic</button>
+            </div>
+            <canvas id="modalCanvas" width="500" height="400"></canvas>
+            <div id="modalInfo"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+    <script src="diagrams_report.js"></script>
+    <script src="resizer_fix.js"></script>
+    <script>
+        let currentReportData = null;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tabs .tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            const actionButtons = document.querySelectorAll('.action-buttons .tab-button');
+            actionButtons.forEach(btn => {
+                if (tabName === 'config') {
+                    if (btn.id && (btn.id.includes('Report') || btn.id.includes('Button'))) {
+                        btn.style.display = 'none';
+                    } else {
+                        btn.style.display = 'inline-flex'; // Use inline-flex for consistent button sizing
+                    }
+                } else if (tabName === 'report') {
+                    if (btn.id && (btn.id.includes('Report') || btn.id.includes('Button'))) {
+                        btn.style.display = 'inline-flex'; // Use inline-flex for consistent button sizing
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                }
+            });
+            
+            if (tabName === 'config') {
+                document.getElementById('configTab').classList.add('active');
+            } else if (tabName === 'report') {
+                document.getElementById('reportTabContent').classList.add('active');
+            }
+            document.querySelector(`.tabs [onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
+        function showReportTab(data) {
+            console.log('showReportTab called with data:', data);
+            
+            document.getElementById('reportTab').disabled = false;
+            currentReportData = data;
+            
+            // Ensure data structure is correct
+            if (data && data.diagrams && data.report) {
+                g_boardsData = data.diagrams;
+                g_reportData = data.report;
+                window.originalComponents = data.original_components || [];
+                window.hierarchyTree = data.hierarchy_tree || [];
+                
+                console.log('Report data loaded:', g_reportData);
+                console.log('Boards data loaded:', g_boardsData);
+                
+                // Render with delay to ensure DOM is ready
+                setTimeout(() => {
+                    if (typeof renderDiagrams === 'function') {
+                        console.log('Calling renderDiagrams');
+                        renderDiagrams();
+                    }
+                    if (typeof renderReport === 'function') {
+                        console.log('Calling renderReport');
+                        renderReport();
+                    }
+                }, 100);
+                
+                showTab('report');
+                
+                // Initialize export button event listeners only once
+                initializeExportButtons();
+                
+                // Re-initialize resizer after showing report tab
+                setTimeout(() => {
+                    resizerInitialized = false;
+                    initResizer();
+                }, 200);
+            } else {
+                console.error('Invalid data structure received:', data);
+                alert('Error: Invalid report data received. Please try generating the report again.');
+            }
+        }
+        
+        let exportButtonsInitialized = false;
+        
+        function initializeExportButtons() {
+            if (exportButtonsInitialized) return;
+            
+            const printBtn = document.getElementById('printButton');
+            const exportCsvBtn = document.getElementById('exportCsvButton');
+            const exportHtmlBtn = document.getElementById('exportHtmlButton');
+            
+            if (printBtn) {
+                printBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    exportToPDF();
+                });
+            }
+            
+            if (exportCsvBtn) {
+                exportCsvBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (currentReportData && currentReportData.report) {
+                        callRuby('export_csv', JSON.stringify(currentReportData.report));
+                    } else {
+                        alert('No report data available for export.');
+                    }
+                });
+            }
+            
+            if (exportHtmlBtn) {
+                exportHtmlBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof exportInteractiveHTML === 'function') {
+                        exportInteractiveHTML();
+                    } else {
+                        alert('HTML export feature is not available.');
+                    }
+                });
+            }
+            
+            const copyMarkdownBtn = document.getElementById('copyMarkdownButton');
+            if (copyMarkdownBtn) {
+                copyMarkdownBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    copyFullReportAsMarkdown();
+                });
+            }
+            
+            exportButtonsInitialized = true;
+        }
+        
+        function exportToPDF() {
+            // Create professional PDF layout
+            const originalContent = document.body.innerHTML;
+            const reportData = g_reportData;
+            const boardsData = g_boardsData;
+            
+            if (!reportData || !boardsData) {
+                alert('No report data available for PDF export.');
+                return;
+            }
+            
+            const reportUnits = currentUnits || 'mm';
+            const reportPrecision = currentPrecision ?? 1;
+            const currency = reportData.summary.currency || 'USD';
+            const currencySymbol = currencySymbols[currency] || currency;
+            
+            const pdfContent = `
+            <div style="font-family: Arial, sans-serif; max-width: 210mm; margin: 0 auto; padding: 20mm; background: white; color: black;">
+                <!-- Header -->
+                <div style="text-align: center; border-bottom: 3px solid #007cba; padding-bottom: 20px; margin-bottom: 30px;">
+                    <h1 style="color: #007cba; margin: 0; font-size: 28px;">AutoNestCut Report</h1>
+                    <p style="margin: 5px 0; color: #666; font-size: 14px;">Professional Cut List & Nesting Analysis</p>
+                    <p style="margin: 5px 0; color: #666; font-size: 12px;">Generated: ${new Date().toLocaleString()}</p>
+                </div>
+                
+                <!-- Executive Summary -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                    <h2 style="color: #007cba; margin-top: 0;">Executive Summary</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <p><strong>Total Parts:</strong> ${reportData.summary.total_parts_instances || 0}</p>
+                            <p><strong>Unique Types:</strong> ${reportData.summary.total_unique_part_types || 0}</p>
+                            <p><strong>Boards Required:</strong> ${reportData.summary.total_boards || 0}</p>
+                        </div>
+                        <div>
+                            <p><strong>Material Efficiency:</strong> ${formatNumber(reportData.summary.overall_efficiency || 0, 1)}%</p>
+                            <p><strong>Total Project Cost:</strong> ${currencySymbol}${(reportData.summary.total_project_cost || 0).toFixed(2)}</p>
+                            <p><strong>Waste Percentage:</strong> ${formatNumber(reportData.summary.overall_waste_percentage || 0, 1)}%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Part Types Table -->
+                <div style="margin-bottom: 30px;">
+                    <h2 style="color: #007cba;">Part Types Summary</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #007cba; color: white;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Name</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">W (${reportUnits})</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">H (${reportUnits})</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Thick (${reportUnits})</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Material</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Grain</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Edge Banding</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Qty</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Total Area</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(reportData.unique_part_types || []).map(part => {
+                                const width = part.width / unitFactors[reportUnits];
+                                const height = part.height / unitFactors[reportUnits];
+                                const thickness = part.thickness / unitFactors[reportUnits];
+                                return `
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 8px; border: 1px solid #ddd;">${part.name}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${formatNumber(width, reportPrecision)}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${formatNumber(height, reportPrecision)}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${formatNumber(thickness, reportPrecision)}</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">${part.material}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${part.grain_direction || 'Any'}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${part.edge_banding || 'None'}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd; font-weight: bold;">${part.total_quantity}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${getAreaDisplay(part.total_area, currentAreaUnits)}</td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Boards Summary -->
+                <div style="margin-bottom: 30px;">
+                    <h2 style="color: #007cba;">Board Layout Summary</h2>
+                    ${boardsData.map((board, index) => {
+                        const width = board.stock_width / unitFactors[reportUnits];
+                        const height = board.stock_height / unitFactors[reportUnits];
+                        return `
+                        <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #f9f9f9;">
+                            <h3 style="margin-top: 0; color: #007cba;">${board.material} - Board ${index + 1}</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 12px;">
+                                <div><strong>Size:</strong> ${formatNumber(width, reportPrecision)} × ${formatNumber(height, reportPrecision)} ${reportUnits}</div>
+                                <div><strong>Parts:</strong> ${board.parts ? board.parts.length : 0}</div>
+                                <div><strong>Efficiency:</strong> ${board.efficiency_percentage ? board.efficiency_percentage.toFixed(1) : 0}%</div>
+                            </div>
+                            ${board.parts && board.parts.length > 0 ? `
+                            <div style="margin-top: 10px;">
+                                <strong>Parts on this board:</strong>
+                                <ul style="margin: 5px 0; padding-left: 20px; font-size: 11px;">
+                                    ${board.parts.map(part => {
+                                        const partW = part.width / unitFactors[reportUnits];
+                                        const partH = part.height / unitFactors[reportUnits];
+                                        let partInfo = `${part.name}: ${formatNumber(partW, reportPrecision)}×${formatNumber(partH, reportPrecision)}${reportUnits}`;
+                                        if (part.edge_banding && part.edge_banding !== 'None') partInfo += ` (${part.edge_banding})`;
+                                        if (part.grain_direction && part.grain_direction !== 'Any') partInfo += ` [${part.grain_direction}]`;
+                                        return `<li>${partInfo}</li>`;
+                                    }).join('')}
+                                </ul>
+                            </div>` : ''}
+                        </div>`;
+                    }).join('')}
+                </div>
+                
+                <!-- Cost Analysis (if still needed, render directly without the problem container) -->
+                ${reportData.unique_board_types ? `
+                <div style="margin-bottom: 30px;">
+                    <h2 style="color: #007cba;">Cost Analysis</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #007cba; color: white;">
+                                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Material</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Sheets</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Price/Sheet</th>
+                                <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Total Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${reportData.unique_board_types.map(board => {
+                                const boardCurrency = board.currency || currency;
+                                const boardSymbol = currencySymbols[boardCurrency] || boardCurrency;
+                                return `
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 8px; border: 1px solid #ddd;">${board.material}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${board.count}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd;">${boardSymbol}${(board.price_per_sheet || 0).toFixed(2)}</td>
+                                    <td style="padding: 8px; text-align: center; border: 1px solid #ddd; font-weight: bold;">${boardSymbol}${(board.total_cost || 0).toFixed(2)}</td>
+                                </tr>`;
+                            }).join('')}
+                            <tr style="background: #e8f5e8; font-weight: bold;">
+                                <td colspan="3" style="padding: 10px; text-align: right; border: 1px solid #ddd;">TOTAL PROJECT COST:</td>
+                                <td style="padding: 10px; text-align: center; border: 1px solid #ddd; color: #22863a; font-size: 14px;">${currencySymbol}${(reportData.summary.total_project_cost || 0).toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>` : ''}
+                
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #666;">
+                    <p>Generated by AutoNestCut v2.2.0 - Professional Cut List & Nesting Software</p>
+                    <p>Report generated on ${new Date().toLocaleString()}</p>
+                </div>
+            </div>`;
+            
+            // Replace body content for printing
+            document.body.innerHTML = pdfContent;
+            
+            // Print
+            window.print();
+            
+            // Restore original content after print dialog
+            setTimeout(() => {
+                document.body.innerHTML = originalContent;
+                // Re-initialize the interface
+                if (typeof renderDiagrams === 'function') renderDiagrams();
+                if (typeof renderReport === 'function') renderReport();
+                // Crucial: Re-initialize event listeners for all dynamic buttons if they are part of originalContent
+                initializeExportButtons(); 
+            }, 1000);
+        }
+
+        function showError(message) {
+            console.error('Error:', message);
+            alert(message);
+        }
+        
+        function showProgressOverlay(message) {
+            const overlay = document.createElement('div');
+            overlay.id = 'progressOverlay';
+            overlay.innerHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <div style="width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #007cba; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;"></div>
+                    <div id="progressMessage" style="background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 10px;">${message}</div>
+                    <div id="progressPercent" style="background: rgba(0,0,0,0.8); color: white; padding: 4px 12px; border-radius: 15px; font-size: 12px; margin-bottom: 15px;">0%</div>
+                    <button onclick="cancelProcessing()" style="background: #ff4444; color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12px; cursor: pointer;">Cancel</button>
+                </div>
+                <style>
+                    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                </style>
+            `;
+            document.body.appendChild(overlay);
+        }
+        
+        function updateProgressOverlay(message, percentage) {
+            const messageEl = document.getElementById('progressMessage');
+            const percentEl = document.getElementById('progressPercent');
+            
+            if (messageEl) messageEl.textContent = message;
+            if (percentEl) percentEl.textContent = percentage + '%';
+        }
+        
+        function hideProgressOverlay() {
+            const overlay = document.getElementById('progressOverlay');
+            if (overlay) overlay.remove();
+        }
+        
+        function cancelProcessing() {
+            callRuby('cancel_processing');
+            hideProgressOverlay();
+        }
+        
+        function refreshConfiguration() {
+            callRuby('refresh_config');
+        }
+        
+        function refreshReport() {
+            callRuby('refresh_report');
+        }
+        
+        function refreshReportWithFeedback() {
+            // Clear cached nesting results to force recalculation with new kerf
+            if (typeof g_boardsData !== 'undefined') {
+                callRuby('clear_nesting_cache');
+            }
+            refreshReport();
+        }
+        
+        function receiveRefreshedData(data) {
+            // Update the configuration with refreshed data
+            receiveInitialData(data);
+        }
+        
+        function refreshReportWithCurrentSettings() {
+            // Get current settings from the form
+            const settings = getCurrentSettings();
+            if (settings) {
+                // Re-process with current settings
+                callRuby('process', JSON.stringify(settings));
+            }
+        }
+        
+        function showConfigTab() {
+            showTab('config');
+        }
+        
+        let showTreeView = false;
+        
+        function toggleTreeView() {
+            showTreeView = !showTreeView;
+            const button = document.getElementById('treeToggle');
+            const treeContainer = document.getElementById('treeStructure');
+            const searchContainer = document.getElementById('treeSearchContainer');
+            
+            if (showTreeView) {
+                button.textContent = 'Hide Tree Structure';
+                treeContainer.style.display = 'block';
+                searchContainer.style.display = 'flex';
+            } else {
+                button.textContent = 'Show Tree Structure';
+                treeContainer.style.display = 'none';
+                searchContainer.style.display = 'none';
+            }
+        }
+        
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const modal = document.getElementById('partModal');
+            const closeBtns = document.querySelectorAll('#partModal .close');
+            
+            closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Initialize resizer with a delay to ensure DOM is ready
+            setTimeout(() => {
+                initResizer();
+            }, 100);
+            callRuby('ready');
+        });
+    </script>
+</body>
+</html>

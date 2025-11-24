@@ -29,7 +29,11 @@ require_relative 'models/cladding_preset'
 require_relative 'processors/model_analyzer'
 require_relative 'processors/nester'
 require_relative 'processors/facade_analyzer'
+require_relative 'processors/component_cache'
+
 require_relative 'ui/dialog_manager'
+require_relative 'ui/progress_dialog'
+require_relative 'processors/async_processor'
 require_relative 'exporters/diagram_generator'
 require_relative 'exporters/report_generator'
 require_relative 'exporters/facade_reporter'
@@ -105,19 +109,36 @@ module AutoNestCut
     end
 
     begin
-      analyzer = ModelAnalyzer.new
-      part_types_by_material_and_quantities = analyzer.extract_parts_from_selection(selection)
-      original_components = analyzer.get_original_components_data
+      # Initialize async processor
+      async_processor = AsyncProcessor.new
+      
+      # Check cache first
+      cached = ComponentCache.get_cached_analysis(selection)
+      
+      if cached
+        dialog_manager = UIDialogManager.new
+        dialog_manager.show_config_dialog(cached[:parts_by_material], cached[:original_components], cached[:hierarchy_tree])
+      else
+        analyzer = ModelAnalyzer.new
+        
+        # --- FIX: Changed method call from extract_parts_from_selection to analyze_selection ---
+        part_types_by_material_and_quantities = analyzer.analyze_selection(selection)
+        # --- END FIX ---
+        
+        original_components = analyzer.get_original_components_data
+        hierarchy_tree = analyzer.get_hierarchy_tree
 
-      if part_types_by_material_and_quantities.empty?
-        UI.messagebox("No valid sheet good parts found in your selection for AutoNestCut.")
-        return
+        if part_types_by_material_and_quantities.empty?
+          UI.messagebox("No valid sheet good parts found in your selection for AutoNestCut.")
+          return
+        end
+        
+        # Cache the results
+        ComponentCache.cache_analysis(selection, part_types_by_material_and_quantities, original_components, hierarchy_tree)
+
+        dialog_manager = UIDialogManager.new
+        dialog_manager.show_config_dialog(part_types_by_material_and_quantities, original_components, hierarchy_tree)
       end
-
-      dialog_manager = UIDialogManager.new
-      hierarchy_tree = analyzer.get_hierarchy_tree
-      Util.debug("Hierarchy tree from analyzer: #{hierarchy_tree.inspect}")
-      dialog_manager.show_config_dialog(part_types_by_material_and_quantities, original_components, hierarchy_tree)
 
     rescue => e
       UI.messagebox("An error occurred during part extraction:\n#{e.message}")
@@ -235,7 +256,7 @@ module AutoNestCut
       autonest_menu = menu.add_submenu(EXTENSION_NAME) # Use constant for name
 
       # Call the renamed primary function
-      autonest_menu.add_item('Generate Cut List') { AutoNestCut.run_extension_feature }
+      autonest_menu.add_item('Generate Cut List') { run_extension_feature }
       autonest_menu.add_separator
       autonest_menu.add_item('Facade Materials Calculator') { AutoNestCut.show_facade_calculator }
       autonest_menu.add_separator
@@ -256,7 +277,7 @@ module AutoNestCut
       # Create toolbar with icon
       toolbar = UI::Toolbar.new(EXTENSION_NAME) # Use constant for name
       # Call the renamed primary function
-      cmd = UI::Command.new(EXTENSION_NAME) { AutoNestCut.run_extension_feature }
+      cmd = UI::Command.new(EXTENSION_NAME) { run_extension_feature }
       cmd.tooltip = 'Generate optimized cut lists and nesting diagrams for sheet goods'
       cmd.status_bar_text = 'AutoNestCut - Automated nesting for sheet goods'
 

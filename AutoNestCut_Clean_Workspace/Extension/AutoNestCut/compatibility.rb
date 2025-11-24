@@ -1,50 +1,27 @@
-# Cross-platform and version compatibility utilities
+# AutoNestCut/compatibility.rb
 module AutoNestCut
   module Compatibility
-    
-    # Check if running on Windows
-    def self.windows?
-      RUBY_PLATFORM =~ /mswin|mingw|windows/
+    # Get user's AppData folder on Windows or Home directory on other OSes
+    def self.user_app_data_path
+      if Sketchup.platform == :platform_win
+        ENV['APPDATA']
+      else
+        ENV['HOME'] # For macOS/Linux if SketchUp runs there
+      end
     end
-    
-    # Check if running on Mac
-    def self.mac?
-      RUBY_PLATFORM =~ /darwin/
-    end
-    
-    # Get SketchUp version as integer
-    def self.sketchup_version
-      Sketchup.version.to_i
-    end
-    
-    # Check if HtmlDialog is available (SU2017+)
-    def self.html_dialog_available?
-      defined?(UI::HtmlDialog)
-    end
-    
-    # Get appropriate dialog class
-    def self.dialog_class
-      html_dialog_available? ? UI::HtmlDialog : UI::WebDialog
-    end
-    
-    # Create cross-platform file path
-    def self.safe_path(*parts)
-      File.join(*parts)
-    end
-    
-    # Get desktop path for current platform
+
+    # Get user's Desktop path
     def self.desktop_path
-      if windows?
-        File.join(ENV['USERPROFILE'] || ENV['HOME'], 'Desktop')
+      if Sketchup.platform == :platform_win
+        File.join(ENV['USERPROFILE'], 'Desktop')
       else
         File.join(ENV['HOME'], 'Desktop')
       end
     end
-    
-    # Check if file exists with cross-platform handling
-    def self.file_exists?(path)
-      File.exist?(path)
-    end
-    
+
+    # Add other compatibility methods here if needed, e.g.,
+    # def self.load_json(file_path)
+    #   # ...
+    # end
   end
 end
