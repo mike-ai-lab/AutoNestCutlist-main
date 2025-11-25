@@ -1,18 +1,6 @@
 // Table customization functionality
 let currentTableId = null;
 let tableSettings = {};
-let textLabels = {
-    costLevels: {
-        low: 'Budget',
-        avg: 'Standard', 
-        high: 'Premium'
-    },
-    tableHeaders: {
-        level: 'Cost Category',
-        cost: 'Unit Cost',
-        efficiency: 'Material Efficiency'
-    }
-};
 let globalTableSettings = {
     fontSize: '14px',
     cellPadding: '8px 12px',
@@ -24,6 +12,20 @@ let globalTableSettings = {
     verticalAlign: 'middle',
     textWrap: 'normal',
     rowHover: '#f6f8fa'
+};
+
+// Text labels and template management
+let textLabels = {
+    costLevels: {
+        low: 'Budget',
+        avg: 'Standard', 
+        high: 'Premium'
+    },
+    tableHeaders: {
+        level: 'Cost Category',
+        cost: 'Unit Cost',
+        efficiency: 'Material Efficiency'
+    }
 };
 
 // Initialize table customization
@@ -330,38 +332,8 @@ function applyToGlobal() {
     showApplyFeedback(`${getTableDisplayName(currentTableId)} settings applied globally!`);
 }
 
-// Show apply feedback
 function showApplyFeedback(message) {
-    // Create or update feedback element
-    let feedback = document.getElementById('applyFeedback');
-    if (!feedback) {
-        feedback = document.createElement('div');
-        feedback.id = 'applyFeedback';
-        feedback.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 10000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        `;
-        document.body.appendChild(feedback);
-    }
-    
-    feedback.textContent = message;
-    feedback.style.transform = 'translateX(0)';
-    
-    // Hide after 3 seconds
-    setTimeout(() => {
-        feedback.style.transform = 'translateX(100%)';
-    }, 3000);
+    // Toast messages removed
 }
 
 // Reset all table settings
@@ -584,6 +556,39 @@ window.addEventListener('load', function() {
     }, 1000);
 });
 
+// Apply hover effect to table
+function applyHoverEffect(table, hoverColor) {
+    // Remove existing hover styles
+    const existingStyle = document.getElementById(`hover-style-${table.id}`);
+    if (existingStyle) {
+        existingStyle.remove();
+    }
+    
+    // Create new hover style
+    const style = document.createElement('style');
+    style.id = `hover-style-${table.id}`;
+    style.textContent = `
+        #${table.id} tbody tr:hover {
+            background-color: ${hoverColor} !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Re-initialize when report is updated
+function reinitializeTableCustomization() {
+    setTimeout(() => {
+        addResizeHandlesToTables();
+        applyAllTableSettings();
+        
+        // Apply column widths
+        const tables = document.querySelectorAll('.table-with-controls table');
+        tables.forEach(table => {
+            applyColumnWidths(table);
+        });
+    }, 100);
+}
+
 // ======================================================================================
 // TEMPLATE MANAGEMENT SYSTEM
 // ======================================================================================
@@ -596,14 +601,14 @@ const predefinedTemplates = {
         settings: {
             fontSize: '14px',
             cellPadding: '12px 16px',
-            headerBg: '#f8f9fa',
-            headerColor: '#212529',
+            headerBg: '#f8fafc',
+            headerColor: '#1f2937',
             borderWidth: '1px',
-            borderColor: '#dee2e6',
+            borderColor: '#e5e7eb',
             textAlign: 'left',
             verticalAlign: 'middle',
             textWrap: 'normal',
-            rowHover: '#e9ecef'
+            rowHover: '#f1f5f9'
         }
     },
     'professional': {
@@ -612,14 +617,14 @@ const predefinedTemplates = {
         settings: {
             fontSize: '13px',
             cellPadding: '10px 14px',
-            headerBg: '#343a40',
+            headerBg: '#1f2937',
             headerColor: '#ffffff',
             borderWidth: '2px',
-            borderColor: '#495057',
+            borderColor: '#374151',
             textAlign: 'left',
             verticalAlign: 'middle',
             textWrap: 'normal',
-            rowHover: '#f8f9fa'
+            rowHover: '#f9fafb'
         }
     },
     'compact': {
@@ -628,14 +633,14 @@ const predefinedTemplates = {
         settings: {
             fontSize: '12px',
             cellPadding: '4px 8px',
-            headerBg: '#6c757d',
+            headerBg: '#6b7280',
             headerColor: '#ffffff',
             borderWidth: '1px',
-            borderColor: '#adb5bd',
+            borderColor: '#9ca3af',
             textAlign: 'left',
             verticalAlign: 'top',
             textWrap: 'nowrap',
-            rowHover: '#f1f3f4'
+            rowHover: '#f3f4f6'
         }
     },
     'elegant': {
@@ -644,14 +649,14 @@ const predefinedTemplates = {
         settings: {
             fontSize: '14px',
             cellPadding: '14px 18px',
-            headerBg: '#6f42c1',
+            headerBg: '#007cba',
             headerColor: '#ffffff',
             borderWidth: '1px',
-            borderColor: '#b19cd9',
+            borderColor: '#0ea5e9',
             textAlign: 'left',
             verticalAlign: 'middle',
             textWrap: 'normal',
-            rowHover: '#f8f6ff'
+            rowHover: '#f0f9ff'
         }
     },
     'minimal': {
@@ -661,13 +666,13 @@ const predefinedTemplates = {
             fontSize: '14px',
             cellPadding: '8px 12px',
             headerBg: '#ffffff',
-            headerColor: '#495057',
+            headerColor: '#374151',
             borderWidth: '0px',
             borderColor: '#ffffff',
             textAlign: 'left',
             verticalAlign: 'middle',
             textWrap: 'normal',
-            rowHover: '#f8f9fa'
+            rowHover: '#f9fafb'
         }
     }
 };
@@ -1080,19 +1085,6 @@ function importTemplateFile(input) {
     input.value = '';
 }
 
-// Utility functions
-function downloadJSON(data, filename) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
 // Text label management
 function updateTextLabel(level, value) {
     if (!value || value.trim() === '') {
@@ -1137,11 +1129,6 @@ function loadTextLabels() {
         }
         // Make globally accessible
         window.textLabels = textLabels;
-        
-        // Also make it available in diagrams_report.js scope
-        if (typeof window !== 'undefined') {
-            window.textLabels = textLabels;
-        }
     } catch (e) {
         console.warn('Could not load text labels:', e);
         // Ensure defaults are available
@@ -1164,6 +1151,19 @@ function updateTextLabelInputs() {
     });
 }
 
+// Utility functions
+function downloadJSON(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 function validateSettingsJSON(data) {
     if (!data || typeof data !== 'object') return false;
     if (!data.settings || typeof data.settings !== 'object') return false;
@@ -1173,35 +1173,23 @@ function validateSettingsJSON(data) {
     return requiredProps.every(prop => data.settings.hasOwnProperty(prop));
 }
 
-// Apply hover effect to table
-function applyHoverEffect(table, hoverColor) {
-    // Remove existing hover styles
-    const existingStyle = document.getElementById(`hover-style-${table.id}`);
-    if (existingStyle) {
-        existingStyle.remove();
-    }
-    
-    // Create new hover style
-    const style = document.createElement('style');
-    style.id = `hover-style-${table.id}`;
-    style.textContent = `
-        #${table.id} tbody tr:hover {
-            background-color: ${hoverColor} !important;
-        }
-    `;
-    document.head.appendChild(style);
+// Override panel animations
+function openTableCustomization(tableId) {
+    currentTableId = tableId;
+    const panel = document.getElementById('tableCustomizationPanel');
+    const title = document.getElementById('panelTitle');
+    title.textContent = `${getTableDisplayName(tableId)}`;
+    panel.style.right = '0';
+    loadTableSettingsToPanel(tableId);
 }
 
-// Re-initialize when report is updated
-function reinitializeTableCustomization() {
-    setTimeout(() => {
-        addResizeHandlesToTables();
-        applyAllTableSettings();
-        
-        // Apply column widths
-        const tables = document.querySelectorAll('.table-with-controls table');
-        tables.forEach(table => {
-            applyColumnWidths(table);
-        });
-    }, 100);
+function closeTableCustomization() {
+    const panel = document.getElementById('tableCustomizationPanel');
+    panel.style.right = '-300px';
+    currentTableId = null;
+}
+
+function toggleGlobalTableSettings() {
+    const controls = document.getElementById('globalTableControls');
+    controls.style.display = controls.style.display === 'none' || !controls.style.display ? 'block' : 'none';
 }

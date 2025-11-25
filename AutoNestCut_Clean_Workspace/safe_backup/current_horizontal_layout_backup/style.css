@@ -1,0 +1,1640 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-size: 14px;
+    color: #000000;
+    font-weight: 700;
+}
+
+/* Ensure consistent font across all elements */
+* {
+    font-family: inherit;
+    /* Added box-sizing to ensure consistent sizing behavior across all elements */
+    box-sizing: border-box; 
+}
+
+/* Redundant. Inherit already handles this. */
+/* table, th, td {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+} */
+
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #d0d7de;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+    flex-shrink: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.language-selector select {
+    padding: 6px 8px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.settings-btn {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-right: 16px;
+}
+
+.settings-btn:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+}
+
+.settings-btn svg {
+    stroke: #24292e;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.settings-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 900;
+    color: #000000;
+}
+
+.developer-credit {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: #4a4a4a;
+    font-weight: 500;
+}
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    background: #f6f8fa;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.tab-button {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #656d76;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex; /* Ensure tab buttons also use flex for potential icon alignment */
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-button:hover {
+    background: #ffffff;
+    color: #24292e;
+}
+
+.tab-button.active {
+    background: #ffffff;
+    color: #24292e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.tab-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tab-content {
+    display: none;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tab-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.config-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.report-header {
+    background: #ffffff;
+    border-bottom: 1px solid #d0d7de;
+    padding: 12px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* Consolidated styling for all icon buttons */
+.icon-btn, .material-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px; /* Standard padding for square icon buttons */
+    min-width: 36px; /* Ensure a minimum size */
+    height: 36px; /* Ensure a consistent height */
+    border-radius: 6px; /* Standard border-radius for buttons */
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid #d0d7de;
+    background: #ffffff;
+    color: #24292e; /* Default color for icons */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    white-space: nowrap; /* Prevent text wrapping for combined icon/text buttons */
+}
+
+.icon-btn:hover, .material-icon-btn:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+    transform: translateY(-1px);
+}
+
+.icon-btn:active, .material-icon-btn:active {
+    transform: translateY(0);
+    transition: all 0.05s ease;
+}
+
+.icon-btn svg, .material-icon-btn svg {
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+    stroke: currentColor; /* Inherit color from parent button */
+    stroke-width: 2; /* Standard Lucide stroke-width */
+    width: 16px; /* Standard icon size */
+    height: 16px; /* Standard icon size */
+}
+
+.icon-btn:hover svg, .material-icon-btn:hover svg {
+    transform: scale(1.1);
+}
+
+/* Specific overrides for header action icons to make them light-themed */
+/* Changed from blue to match settings button style */
+.header-controls .action-buttons .tab-button.icon-btn.report-action-btn {
+    background: #ffffff; /* Light background */
+    color: #24292e; /* Dark icon color */
+    border: 1px solid #d0d7de; /* Border to match other light buttons */
+    padding: 8px; /* Consistent padding */
+    min-width: 36px;
+    height: 36px;
+    box-shadow: none; /* Remove tab button box shadow if it applies */
+}
+
+.header-controls .action-buttons .tab-button.icon-btn.report-action-btn:hover {
+    background: #f6f8fa; /* Light grey on hover */
+    border-color: #8c959f; /* Darker border on hover */
+    transform: translateY(-1px);
+}
+
+/* Styling for the 'Show Used Only' button feedback */
+#foldToggle.active {
+    background: #28a745; /* Green for active */
+    color: white;
+    border-color: #28a745;
+}
+
+#foldToggle.active:hover {
+    background: #218838; /* Darker green on hover */
+    border-color: #218838;
+}
+
+/* Visually hidden for screen readers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: 900;
+    color: #000000;
+    margin: 24px 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: none;
+}
+
+.section {
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 800;
+    color: #000000;
+    margin-bottom: 6px;
+}
+
+input[type="number"], input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border-color: #24292e;
+    box-shadow: 0 0 0 3px rgba(36, 41, 46, 0.1);
+}
+
+.materials-controls-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.materials-action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Reduced column count in materials header */
+.materials-header {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px 100px 100px auto auto; /* Removed currency column */
+    gap: 12px;
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 900;
+    color: #000000;
+    margin-bottom: 8px;
+}
+
+.material-item {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px 100px 100px auto auto; /* Removed currency column */
+    gap: 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    align-items: center;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+}
+
+.material-used {
+    background: #f5f5f5;
+    border-color: #d0d0d0;
+}
+
+.material-unused {
+    background: #ffffff;
+    border-color: #d0d7de;
+}
+
+.material-item input {
+    padding: 6px 8px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.material-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.material-action-btn {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.material-action-btn:hover {
+    background: #f6f8fa;
+}
+
+.buttons-top {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f6f8fa;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+}
+
+button {
+    padding: 10px 16px;
+    margin: 0 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #24292e;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+button:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+    transition: all 0.05s ease;
+}
+
+button svg {
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+button:hover svg {
+    transform: scale(1.05);
+}
+
+button.primary {
+    background: #24292e;
+    color: white;
+    border-color: #24292e;
+}
+
+button.primary:hover {
+    background: #1c2128;
+}
+
+button.secondary {
+    background: #656d76;
+    color: white;
+    border-color: #656d76;
+}
+
+button.secondary:hover {
+    background: #4c5561;
+}
+
+/* Specific styling for the header action button group */
+.action-buttons {
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    align-items: center;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: visible;
+    margin-bottom: 16px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
+    display: block;
+}
+
+/* New container for tables with markdown buttons */
+.table-with-controls {
+    margin-bottom: 16px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background: #ffffff;
+    position: relative; /* For absolute positioning of controls */
+    --table-cell-padding: 8px 12px;
+    --table-border-color: #d0d7de;
+    --table-border-width: 1px;
+    --table-header-bg: #f5f5f5;
+    --table-header-color: #000000;
+    --table-row-hover: #f6f8fa;
+    --table-text-align: left;
+    --table-vertical-align: middle;
+    --table-text-wrap: normal;
+    --table-font-size: 14px;
+}
+
+/* Side-by-side tables container - REMOVED DUPLICATE, see line ~1143 for main definition */
+
+.table-controls {
+    position: absolute;
+    top: -40px; /* Adjust as needed to position above the table header */
+    right: 0;
+    display: flex;
+    gap: 8px;
+    padding: 4px; /* Some padding around the button */
+    z-index: 5; /* Ensure it's above table content */
+}
+
+/* Global table controls at top of report */
+.global-table-controls {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: none; /* Hidden by default */
+}
+
+.global-table-controls.active {
+    display: block;
+}
+
+.global-table-controls h3 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.global-settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.global-setting-group {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.global-setting-group h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+    border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 4px;
+}
+
+.global-setting-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.global-setting-row label {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 0;
+    min-width: 70px;
+}
+
+.global-setting-row select {
+    flex: 1;
+    padding: 4px 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.global-color-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.color-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.color-group label {
+    font-size: 11px;
+    font-weight: 500;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.color-input-small {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 2px !important;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #d0d7de;
+}
+
+@media (max-width: 768px) {
+    .global-settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .global-color-row {
+        justify-content: space-around;
+    }
+}
+
+/* Table customization panel */
+.table-customization-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 340px;
+    height: 100vh;
+    background: #ffffff;
+    border-left: 1px solid #d0d7de;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.table-customization-panel.active {
+    right: 0;
+}
+
+.table-customization-panel h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #d0d7de;
+}
+
+.table-setting-group {
+    margin-bottom: 20px;
+}
+
+.table-setting-group h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #24292e;
+}
+
+.table-setting-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.table-setting-row label {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.table-setting-row input,
+.table-setting-row select {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.color-input {
+    width: 40px !important;
+    height: 32px;
+    padding: 2px !important;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #d0d7de;
+}
+
+.panel-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #d0d7de;
+}
+
+.panel-buttons button {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* Column resize handles */
+/* NOTE: The selector '.table-with-controls table th' correctly targets th elements inside this container.
+         The issue was likely with how the handle itself was rendered or interacted with, not the CSS selector. */
+.table-with-controls table th {
+    position: relative;
+    border-right: 1px solid #d0d7de;
+}
+
+.column-resize-handle {
+    position: absolute;
+    top: 0;
+    /* Changed 'right' to 'left' relative to the parent 'th' to align with the *right edge* of the current column.
+       This is a common pattern for column resizing. If the handle is meant to be on the left edge of the next column,
+       'right: -3px' was technically correct, but 'left: calc(100% - 3px)' is more robust for positioning it *on* the
+       right edge of its own TH.
+       Let's assume the intent is for the handle to be on the right edge of the *resizable column*. */
+    right: -3px; /* This was the original, and correctly positions it for the right-side of its parent TH. */
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    background: rgba(0, 124, 186, 0.2);
+    border-right: 1px solid rgba(0, 124, 186, 0.4);
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.column-resize-handle:hover {
+    background: rgba(0, 124, 186, 0.6);
+    border-right: 2px solid #007cba;
+    width: 8px;
+    right: -4px; /* Adjust right position slightly when width increases */
+}
+
+.column-resize-handle.resizing {
+    background: #007cba;
+    border-right: 2px solid #005a87;
+    width: 8px;
+    right: -4px; /* Adjust right position slightly when width increases */
+}
+
+/* Table customization visual enhancements */
+.table-with-controls .column-resize-handle {
+    opacity: 0.6;
+}
+
+/* Changed from .table-with-controls:hover to .table-with-controls table th:hover
+   to only show handle opacity change when hovering over the header cell itself,
+   not the entire table-with-controls div.
+   This avoids all handles fading in if you just hover anywhere in the table area. */
+.table-with-controls table th:hover .column-resize-handle {
+    opacity: 0.8;
+}
+
+.table-with-controls .column-resize-handle:hover {
+    opacity: 1;
+    transform: scaleX(1.2); /* This effect should probably be for the handle itself, not its parent hover */
+}
+
+/* Add visual separator lines between columns */
+/* This rule effectively creates a visual separator. If a resize handle is also present, it might overlap.
+   Consider if this is still needed if resize handles also provide a visual line. */
+.table-with-controls table th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 0;
+    width: 1px;
+    height: 80%;
+    background: rgba(0, 124, 186, 0.15);
+    pointer-events: none;
+}
+
+/* Smooth transitions for table changes */
+.table-with-controls table {
+    transition: all 0.2s ease;
+}
+
+.table-with-controls th,
+.table-with-controls td {
+    transition: all 0.2s ease;
+}
+
+/* Panel overlay */
+/* The modal overlay for the customization panel should likely be active when the panel is active.
+   This rule assumes the overlay is a sibling, which is a common pattern. */
+.table-customization-panel.active + .modal-overlay {
+    display: block;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+}
+
+/* Global controls styling */
+.report-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.report-title h2 {
+    margin: 0;
+}
+
+/* Improved color input styling */
+.color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+.color-input-small::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-input-small::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+
+/* Table setting groups spacing */
+.table-setting-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .table-customization-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .global-table-controls {
+        padding: 8px;
+    }
+    
+    .table-setting-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .table-setting-row label {
+        margin-bottom: 4px;
+    }
+}
+
+/* Template Management Styles */
+.template-management {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.template-management h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+    border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 4px;
+}
+
+.template-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.template-controls select {
+    flex: 1;
+    padding: 4px 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.settings-io {
+    display: flex;
+    gap: 8px;
+}
+
+.settings-io button {
+    flex: 1;
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 0;
+}
+
+.template-section {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.template-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+}
+
+/* Template Manager Modal */
+.template-manager-content {
+    width: 800px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.template-categories {
+    margin: 16px 0;
+}
+
+.category-tabs {
+    display: flex;
+    border-bottom: 1px solid #d0d7de;
+    margin-bottom: 16px;
+}
+
+.category-tab {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    margin: 0;
+}
+
+.category-tab.active {
+    border-bottom-color: #007cba;
+    color: #007cba;
+    font-weight: 600;
+}
+
+.category-tab:hover {
+    background: #f6f8fa;
+}
+
+.template-category {
+    display: none;
+}
+
+.template-category.active {
+    display: block;
+}
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.template-card {
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.template-card:hover {
+    border-color: #007cba;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.template-card.selected {
+    border-color: #007cba;
+    background: #f0f8ff;
+}
+
+.template-card h5 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #24292e;
+}
+
+.template-card p {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #656d76;
+    line-height: 1.3;
+}
+
+.template-preview {
+    background: #f6f8fa;
+    border-radius: 3px;
+    padding: 4px;
+    font-size: 10px;
+    color: #656d76;
+    margin-bottom: 8px;
+}
+
+.template-actions-card {
+    display: flex;
+    gap: 4px;
+    justify-content: space-between;
+}
+
+.template-actions-card button {
+    padding: 4px 8px;
+    font-size: 11px;
+    margin: 0;
+}
+
+.template-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.template-actions button {
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 0;
+}
+
+.template-manager-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #d0d7de;
+}
+
+.template-manager-buttons button {
+    padding: 8px 16px;
+    margin: 0;
+}
+
+/* Compact Controls */
+.compact-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.compact-select {
+    flex: 1;
+    padding: 4px 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 120px;
+}
+
+.compact-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.icon-btn.compact {
+    min-width: 28px;
+    height: 28px;
+    padding: 6px;
+}
+
+.compact-panel-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.btn-compact {
+    padding: 6px 10px;
+    font-size: 12px;
+    margin: 0;
+    border-radius: 4px;
+    flex: 1;
+}
+
+/* Side by side tables - REMOVED DUPLICATE, see line ~1565 for main definition */
+
+.table-controls .icon-btn {
+    background: #f5f5f5; /* Light background for the markdown button */
+    border-color: #d0d7de;
+    min-width: 32px; /* Smaller icon button for table controls */
+    height: 32px;
+    padding: 6px;
+}
+
+.table-controls .icon-btn:hover {
+    background: #e0e0e0;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed; /* Ensures column widths are respected */
+    border-collapse: collapse;
+    font-size: var(--table-font-size, 14px);
+    background: #ffffff;
+    margin: 0;
+}
+
+th, td {
+    padding: var(--table-cell-padding, 8px 12px);
+    text-align: var(--table-text-align, left);
+    border-bottom: var(--table-border-width, 1px) solid var(--table-border-color, #d0d7de);
+    white-space: var(--table-text-wrap, normal);
+    word-wrap: break-word;
+    vertical-align: var(--table-vertical-align, middle);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+th {
+    background: var(--table-header-bg, #f5f5f5) !important;
+    color: var(--table-header-color, #000000) !important;
+    font-weight: 700;
+    text-align: var(--table-text-align, left) !important;
+}
+
+tbody tr:hover {
+    background: var(--table-row-hover, #f6f8fa) !important;
+}
+
+/* Ensure numeric column headers are right-aligned for better readability */
+th:nth-child(n+2):not(#uniquePartTypesTable th:nth-child(5)):not(#uniquePartTypesTable th:nth-child(1)),
+#sheetInventoryTable th:nth-child(2), /* Dimensions should be left */
+#materialsUsedTable th:nth-child(2) /* Price should be right */
+{
+    text-align: right;
+}
+
+/* Specifically align 'Total Area' in uniquePartTypesTable to the right */
+#uniquePartTypesTable th:nth-child(9) {
+    text-align: right;
+}
+
+/* Explicitly left align headers that are textual and might be affected by nth-child rules */
+#uniquePartTypesTable th:nth-child(1), /* Name */
+#uniquePartTypesTable th:nth-child(5), /* Material */
+#uniquePartTypesTable th:nth-child(6), /* Grain */
+#uniquePartTypesTable th:nth-child(7), /* Edge Banding */
+#partsTable th:nth-child(1), /* ID */
+#partsTable th:nth-child(2), /* Name */
+#partsTable th:nth-child(3), /* Dimensions */
+#partsTable th:nth-child(4), /* Material */
+#partsTable th:nth-child(5), /* Grain */
+#partsTable th:nth-child(6), /* Edge Banding */
+#materialsUsedTable th:nth-child(1), /* Material */
+#sheetInventoryTable th:nth-child(1), /* Material */
+#sheetInventoryTable th:nth-child(2) /* Dimensions (now descriptive string) */
+{
+    text-align: left;
+}
+
+
+/* Specific column widths for Unique Part Types table */
+#uniquePartTypesTable th:nth-child(1), #uniquePartTypesTable td:nth-child(1) { /* Name */
+    width: 20%;
+}
+#uniquePartTypesTable th:nth-child(2), #uniquePartTypesTable td:nth-child(2) { /* W */
+    width: 9%;
+}
+#uniquePartTypesTable th:nth-child(3), #uniquePartTypesTable td:nth-child(3) { /* H */
+    width: 9%;
+}
+#uniquePartTypesTable th:nth-child(4), #uniquePartTypesTable td:nth-child(4) { /* Thick */
+    width: 9%;
+}
+#uniquePartTypesTable th:nth-child(5), #uniquePartTypesTable td:nth-child(5) { /* Material */
+    width: 15%;
+}
+#uniquePartTypesTable th:nth-child(6), #uniquePartTypesTable td:nth-child(6) { /* Grain */
+    width: 8%; /* Reduced width */
+}
+#uniquePartTypesTable th:nth-child(7), #uniquePartTypesTable td:nth-child(7) { /* Edge Banding */
+    width: 10%;
+}
+#uniquePartTypesTable th:nth-child(8), #uniquePartTypesTable td:nth-child(8) { /* Qty */
+    width: 5%;
+}
+#uniquePartTypesTable th:nth-child(9), #uniquePartTypesTable td:nth-child(9) { /* Total Area */
+    width: 15%; /* Increased width */
+}
+
+/* Responsive table behavior - this section remains valid for smaller screens */
+@media (max-width: 768px) {
+    .table-wrapper, .table-with-controls {
+        font-size: 12px;
+    }
+    
+    th, td {
+        padding: 6px 8px;
+    }
+    
+    /* Responsive adjustment for uniquePartTypesTable */
+    #uniquePartTypesTable th:nth-child(1), #uniquePartTypesTable td:nth-child(1) { width: 18%; }
+    #uniquePartTypesTable th:nth-child(2), #uniquePartTypesTable td:nth-child(2) { width: 8%; }
+    #uniquePartTypesTable th:nth-child(3), #uniquePartTypesTable td:nth-child(3) { width: 8%; }
+    #uniquePartTypesTable th:nth-child(4), #uniquePartTypesTable td:nth-child(4) { width: 8%; }
+    #uniquePartTypesTable th:nth-child(5), #uniquePartTypesTable td:nth-child(5) { width: 12%; }
+    #uniquePartTypesTable th:nth-child(6), #uniquePartTypesTable td:nth-child(6) { width: 7%; }
+    #uniquePartTypesTable th:nth-child(7), #uniquePartTypesTable td:nth-child(7) { width: 9%; }
+    #uniquePartTypesTable th:nth-child(8), #uniquePartTypesTable td:nth-child(8) { width: 5%; }
+    #uniquePartTypesTable th:nth-child(9), #uniquePartTypesTable td:nth-child(9) { width: 15%; }
+}
+
+/* This tbody tr:hover rule is duplicated; removed the one that was less specific.
+   The one within 'table' rule above is more appropriate. */
+/* tbody tr:hover {
+    background: #f6f8fa;
+} */
+
+.container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.diagrams-container {
+    flex: 1;
+    min-width: 300px;
+    padding: 16px;
+    background: #ffffff;
+    border-right: 1px solid #d0d7de;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 16px;
+}
+
+.report-container {
+    flex: 1;
+    min-width: 400px;
+    padding: 16px;
+    background: #ffffff;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0;
+}
+
+#resizer {
+    width: 8px;
+    background: #d0d7de;
+    cursor: col-resize;
+    user-select: none;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    border-left: 1px solid #d0d7de;
+    border-right: 1px solid #d0d7de;
+}
+
+#resizer:hover {
+    background: #8c959f;
+}
+
+#resizer:active {
+    background: #656d76;
+}
+
+.tree-controls {
+    margin: 12px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.tree-search {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    background: #f6f8fa;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    flex-grow: 1; /* Allows it to take available space */
+}
+
+.tree-search input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.tree-search button {
+    padding: 6px 12px;
+    font-size: 14px;
+    margin: 0;
+}
+
+.parts-card {
+    margin-bottom: 16px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background: #ffffff;
+    position: relative; /* For absolute positioning of markdown button */
+}
+
+.parts-card-title {
+    background: #f5f5f5;
+    padding: 8px 12px;
+    font-weight: 900;
+    font-size: 14px;
+    border-bottom: 1px solid #d0d7de;
+    color: #000000;
+    display: flex; /* Allow title and button to be on same line */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.parts-card-title .icon-btn {
+    background: transparent;
+    border: none;
+    padding: 4px; /* Smaller padding for inline button */
+    min-width: 28px;
+    height: 28px;
+    /* Ensure icon color is dark on light background */
+    color: #24292e; 
+}
+
+.parts-card-title .icon-btn:hover {
+    background: #e0e0e0;
+}
+
+.parts-preview-table th, .parts-preview-table td {
+    padding: 6px 8px;
+    font-size: 14px;
+}
+
+.used-indicator {
+    color: #000000;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.unused-indicator {
+    color: #656d76;
+    font-size: 12px;
+}
+
+.sort-select {
+    padding: 6px 8px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #ffffff;
+    max-width: 120px; /* Constrain width of sort dropdown */
+}
+
+.materials-sort-controls, .materials-filter-buttons, .currency-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.currency-selector {
+    margin-bottom: 12px;
+}
+
+.currency-selector label {
+    margin-bottom: 0;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.tree-structure {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 16px;
+    margin: 12px 0;
+    max-height: 500px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: #ffffff;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #d0d7de;
+    width: 520px;
+    max-width: 90%;
+    border-radius: 6px;
+}
+
+.close {
+    color: #656d76;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #24292e;
+}
+
+/* Facade Calculator Specific Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 900;
+    color: #24292e;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #656d76;
+    font-weight: 600;
+}
+
+.preset-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.material-option {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.material-option:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+}
+
+.material-option.selected {
+    background: #24292e;
+    color: #ffffff;
+    border-color: #24292e;
+}
+
+.material-name {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.material-details {
+    font-size: 12px;
+    color: #656d76;
+    margin-bottom: 2px;
+}
+
+.material-option.selected .material-details,
+.material-option.selected .material-pattern {
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+.material-pattern {
+    font-size: 12px;
+    color: #656d76;
+    font-style: italic;
+}
+
+.results-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+}
+
+.result-group {
+    background: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #d0d7de;
+}
+
+.result-group h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 900;
+    color: #24292e;
+}
+
+.result-group p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #24292e;
+}
+
+.result-group strong {
+    font-weight: 800;
+}
+
+select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #24292e;
+    box-sizing: border-box;
+}
+
+select:focus {
+    outline: none;
+    border-color: #24292e;
+    box-shadow: 0 0 0 3px rgba(36, 41, 46, 0.1);
+}
+/* ========================================
+   Side-by-Side Tables Layout
+   ======================================== */
+
+.side-by-side-tables {
+    display: flex;
+    width: 850px;
+    margin: 20px auto;
+    gap: 50px;
+    justify-content: center;
+}
+
+.side-table {
+    width: 400px;
+    flex-shrink: 0;
+}
+
+.side-table h2 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.side-table .table-with-controls {
+    width: 400px;
+    margin-bottom: 0;
+}
+
+.side-table .table-controls {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    display: flex;
+    gap: 8px;
+}
+
+.side-table table {
+    width: 400px;
+    font-size: 14px;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.side-table th,
+.side-table td {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #d0d7de;
+    text-align: left;
+    vertical-align: middle;
+}
+
+/* Full-width tables after side-by-side pairs */
+.table-with-controls:not(.side-table .table-with-controls) {
+    width: 850px;
+    margin: 20px auto;
+}
+
+.table-with-controls:not(.side-table .table-with-controls) table {
+    width: 850px;
+    table-layout: fixed;
+}
+
+/* Section separator styling */
+.section-separator {
+    height: 1px;
+    background: #d0d7de;
+    margin: 30px auto;
+    width: 850px;
+}
+
+/* Center full-width table headers */
+#reportContainer h2:not(.side-table h2) {
+    width: 850px;
+    margin: 20px auto 12px auto;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+}
+
+/* The rest of your CSS for general tables (outside .side-table context) */
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: var(--table-font-size, 14px);
+    background: #ffffff;
+    margin: 0;
+}
+
+th, td {
+    padding: var(--table-cell-padding, 8px 12px);
+    text-align: var(--table-text-align, left);
+    border-bottom: var(--table-border-width, 1px) solid var(--table-border-color, #d0d7de);
+    white-space: var(--table-text-wrap, normal);
+    word-wrap: break-word;
+    vertical-align: var(--table-vertical-align, middle);
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ... rest of your CSS ... */

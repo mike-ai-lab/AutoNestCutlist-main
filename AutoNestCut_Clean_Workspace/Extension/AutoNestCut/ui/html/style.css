@@ -14,14 +14,11 @@ body {
 /* Ensure consistent font across all elements */
 * {
     font-family: inherit;
-    /* Added box-sizing to ensure consistent sizing behavior across all elements */
-    box-sizing: border-box; 
 }
 
-/* Redundant. Inherit already handles this. */
-/* table, th, td {
+table, th, td {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-} */
+}
 
 .header {
     background: #ffffff;
@@ -97,13 +94,13 @@ body {
     margin: 0;
     font-size: 18px;
     font-weight: 900;
-    color: #000000;
+    color: #1f2937;
 }
 
 .developer-credit {
     margin: 2px 0 0 0;
     font-size: 12px;
-    color: #4a4a4a;
+    color: #6b7280;
     font-weight: 500;
 }
 
@@ -217,21 +214,32 @@ body {
 }
 
 /* Specific overrides for header action icons to make them light-themed */
-/* Changed from blue to match settings button style */
 .header-controls .action-buttons .tab-button.icon-btn.report-action-btn {
-    background: #ffffff; /* Light background */
-    color: #24292e; /* Dark icon color */
-    border: 1px solid #d0d7de; /* Border to match other light buttons */
-    padding: 8px; /* Consistent padding */
+    background: #ffffff;
+    color: #24292e;
+    border: 1px solid #d0d7de;
+    padding: 8px;
     min-width: 36px;
     height: 36px;
-    box-shadow: none; /* Remove tab button box shadow if it applies */
+    box-shadow: none;
 }
 
 .header-controls .action-buttons .tab-button.icon-btn.report-action-btn:hover {
-    background: #f6f8fa; /* Light grey on hover */
-    border-color: #8c959f; /* Darker border on hover */
+    background: #f6f8fa;
+    border-color: #8c959f;
     transform: translateY(-1px);
+}
+
+/* Ensure consistent icon button styling across the app */
+.icon-btn.compact {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #24292e;
+}
+
+.icon-btn.compact:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
 }
 
 /* Styling for the 'Show Used Only' button feedback */
@@ -261,10 +269,13 @@ body {
 h2 {
     font-size: 16px;
     font-weight: 900;
-    color: #000000;
+    color: #1f2937;
     margin: 24px 0 12px 0;
     padding-bottom: 6px;
-    border-bottom: none;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .section {
@@ -314,15 +325,16 @@ input:focus {
 /* Reduced column count in materials header */
 .materials-header {
     display: grid;
-    grid-template-columns: 1fr 100px 100px 100px 100px auto auto; /* Removed currency column */
+    grid-template-columns: 1fr 100px 100px 100px 100px auto auto;
     gap: 12px;
     padding: 8px 12px;
-    background: #f5f5f5;
+    background: #f8fafc;
     border-radius: 6px;
     font-size: 14px;
     font-weight: 900;
-    color: #000000;
+    color: #1f2937;
     margin-bottom: 8px;
+    border: 1px solid #e5e7eb;
 }
 
 .material-item {
@@ -337,13 +349,14 @@ input:focus {
 }
 
 .material-used {
-    background: #f5f5f5;
-    border-color: #d0d0d0;
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+    box-shadow: 0 1px 3px rgba(14, 165, 233, 0.1);
 }
 
 .material-unused {
     background: #ffffff;
-    border-color: #d0d7de;
+    border-color: #e5e7eb;
 }
 
 .material-item input {
@@ -417,23 +430,25 @@ button:hover svg {
 }
 
 button.primary {
-    background: #24292e;
+    background: #007cba;
     color: white;
-    border-color: #24292e;
+    border-color: #007cba;
 }
 
 button.primary:hover {
-    background: #1c2128;
+    background: #005a87;
+    border-color: #005a87;
 }
 
 button.secondary {
-    background: #656d76;
+    background: #6c757d;
     color: white;
-    border-color: #656d76;
+    border-color: #6c757d;
 }
 
 button.secondary:hover {
-    background: #4c5561;
+    background: #545b62;
+    border-color: #545b62;
 }
 
 /* Specific styling for the header action button group */
@@ -444,13 +459,9 @@ button.secondary:hover {
 }
 
 .table-wrapper {
-    overflow-x: auto;
-    overflow-y: visible;
     margin-bottom: 16px;
     border: 1px solid #d0d7de;
     border-radius: 6px;
-    max-width: 100%;
-    min-width: 0;
     width: 100%;
     display: block;
 }
@@ -461,7 +472,8 @@ button.secondary:hover {
     border: 1px solid #d0d7de;
     border-radius: 6px;
     background: #ffffff;
-    position: relative; /* For absolute positioning of controls */
+    position: relative;
+    width: 100%;
     --table-cell-padding: 8px 12px;
     --table-border-color: #d0d7de;
     --table-border-width: 1px;
@@ -474,80 +486,10 @@ button.secondary:hover {
     --table-font-size: 14px;
 }
 
-/* Side-by-side tables container */
-.side-by-side-tables {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.side-table {
-    flex: 1;
-    min-width: 0; /* Allow shrinking */
-}
-
-.side-table h2 {
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.side-table .table-with-controls {
-    margin-bottom: 0;
-    position: static; /* Override relative positioning */
-}
-
-.side-table .table-controls {
-    position: static; /* Fix the absolute positioning issue */
-    top: auto;
-    right: auto;
-    margin-bottom: 8px;
-    justify-content: flex-end;
-}
-
-.side-table table {
-    font-size: 10px;
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-
-.side-table th,
-.side-table td {
-    padding: 3px 4px !important;
-    font-size: 10px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 0; /* Force equal column distribution */
-    border: 1px solid #d0d7de;
-}
-
-.side-table th:first-child,
-.side-table td:first-child {
-    width: 60%; /* Material name gets more space */
-}
-
-.side-table th:last-child,
-.side-table td:last-child {
-    width: 40%; /* Price gets less space */
-}
-
-/* Responsive design for side-by-side tables */
-@media (max-width: 768px) {
-    .side-by-side-tables {
-        flex-direction: column;
-        gap: 12px;
-    }
-}
-
 .table-controls {
-    position: absolute;
-    top: -40px; /* Adjust as needed to position above the table header */
-    right: 0;
     display: flex;
-    gap: 8px;
-    padding: 4px; /* Some padding around the button */
-    z-index: 5; /* Ensure it's above table content */
+    gap: 6px;
+    margin-left: auto;
 }
 
 /* Global table controls at top of report */
@@ -583,14 +525,15 @@ button.secondary:hover {
     border: 1px solid #d0d7de;
     border-radius: 6px;
     padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .global-setting-group h4 {
     margin: 0 0 8px 0;
     font-size: 13px;
     font-weight: 600;
-    color: #24292e;
-    border-bottom: 1px solid #e1e4e8;
+    color: #1f2937;
+    border-bottom: 1px solid #e5e7eb;
     padding-bottom: 4px;
 }
 
@@ -654,6 +597,24 @@ button.secondary:hover {
     
     .global-color-row {
         justify-content: space-around;
+    }
+    
+    .template-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .compact-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .compact-buttons {
+        justify-content: space-between;
+    }
+    
+    .template-manager-content {
+        width: 95vw;
+        margin: 2% auto;
     }
 }
 
@@ -732,22 +693,47 @@ button.secondary:hover {
 
 .panel-buttons {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-top: 20px;
     padding-top: 16px;
     border-top: 1px solid #d0d7de;
 }
 
 .panel-buttons button {
-    flex: 1;
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 8px;
+    font-size: 14px;
     margin: 0;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    color: #24292e;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.panel-buttons button:hover {
+    background: #f6f8fa;
+    border-color: #8c959f;
+    transform: translateY(-1px);
+}
+
+.panel-buttons button.primary {
+    background: #007cba;
+    color: white;
+    border-color: #007cba;
+}
+
+.panel-buttons button.primary:hover {
+    background: #005a87;
+    border-color: #005a87;
 }
 
 /* Column resize handles */
-/* NOTE: The selector '.table-with-controls table th' correctly targets th elements inside this container.
-         The issue was likely with how the handle itself was rendered or interacted with, not the CSS selector. */
 .table-with-controls table th {
     position: relative;
     border-right: 1px solid #d0d7de;
@@ -756,12 +742,7 @@ button.secondary:hover {
 .column-resize-handle {
     position: absolute;
     top: 0;
-    /* Changed 'right' to 'left' relative to the parent 'th' to align with the *right edge* of the current column.
-       This is a common pattern for column resizing. If the handle is meant to be on the left edge of the next column,
-       'right: -3px' was technically correct, but 'left: calc(100% - 3px)' is more robust for positioning it *on* the
-       right edge of its own TH.
-       Let's assume the intent is for the handle to be on the right edge of the *resizable column*. */
-    right: -3px; /* This was the original, and correctly positions it for the right-side of its parent TH. */
+    right: -3px;
     width: 6px;
     height: 100%;
     cursor: col-resize;
@@ -775,14 +756,14 @@ button.secondary:hover {
     background: rgba(0, 124, 186, 0.6);
     border-right: 2px solid #007cba;
     width: 8px;
-    right: -4px; /* Adjust right position slightly when width increases */
+    right: -4px;
 }
 
 .column-resize-handle.resizing {
     background: #007cba;
     border-right: 2px solid #005a87;
     width: 8px;
-    right: -4px; /* Adjust right position slightly when width increases */
+    right: -4px;
 }
 
 /* Table customization visual enhancements */
@@ -790,22 +771,16 @@ button.secondary:hover {
     opacity: 0.6;
 }
 
-/* Changed from .table-with-controls:hover to .table-with-controls table th:hover
-   to only show handle opacity change when hovering over the header cell itself,
-   not the entire table-with-controls div.
-   This avoids all handles fading in if you just hover anywhere in the table area. */
-.table-with-controls table th:hover .column-resize-handle {
+.table-with-controls:hover .column-resize-handle {
     opacity: 0.8;
 }
 
 .table-with-controls .column-resize-handle:hover {
     opacity: 1;
-    transform: scaleX(1.2); /* This effect should probably be for the handle itself, not its parent hover */
+    transform: scaleX(1.2);
 }
 
 /* Add visual separator lines between columns */
-/* This rule effectively creates a visual separator. If a resize handle is also present, it might overlap.
-   Consider if this is still needed if resize handles also provide a visual line. */
 .table-with-controls table th:not(:last-child)::after {
     content: '';
     position: absolute;
@@ -828,8 +803,6 @@ button.secondary:hover {
 }
 
 /* Panel overlay */
-/* The modal overlay for the customization panel should likely be active when the panel is active.
-   This rule assumes the overlay is a sibling, which is a common pattern. */
 .table-customization-panel.active + .modal-overlay {
     display: block;
 }
@@ -867,15 +840,6 @@ button.secondary:hover {
     border-radius: 2px;
 }
 
-.color-input-small::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-
-.color-input-small::-webkit-color-swatch {
-    border: none;
-    border-radius: 2px;
-}
-
 /* Table setting groups spacing */
 .table-setting-group:last-child {
     margin-bottom: 0;
@@ -902,287 +866,26 @@ button.secondary:hover {
     }
 }
 
-/* Template Management Styles */
-.template-management {
+.table-controls .icon-btn {
     background: #ffffff;
     border: 1px solid #d0d7de;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 16px;
-}
-
-.template-management h4 {
-    margin: 0 0 8px 0;
-    font-size: 13px;
-    font-weight: 600;
-    color: #24292e;
-    border-bottom: 1px solid #e1e4e8;
-    padding-bottom: 4px;
-}
-
-.template-controls {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.template-controls select {
-    flex: 1;
-    padding: 4px 6px;
-    border: 1px solid #d0d7de;
-    border-radius: 4px;
-    font-size: 12px;
-}
-
-.settings-io {
-    display: flex;
-    gap: 8px;
-}
-
-.settings-io button {
-    flex: 1;
-    padding: 6px 12px;
-    font-size: 12px;
-    margin: 0;
-}
-
-.template-section {
-    background: #f6f8fa;
-    border: 1px solid #d0d7de;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 16px;
-}
-
-.template-section h4 {
-    margin: 0 0 8px 0;
-    font-size: 13px;
-    font-weight: 600;
-    color: #24292e;
-}
-
-/* Template Manager Modal */
-.template-manager-content {
-    width: 800px;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.template-categories {
-    margin: 16px 0;
-}
-
-.category-tabs {
-    display: flex;
-    border-bottom: 1px solid #d0d7de;
-    margin-bottom: 16px;
-}
-
-.category-tab {
-    padding: 8px 16px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    font-size: 14px;
-    margin: 0;
-}
-
-.category-tab.active {
-    border-bottom-color: #007cba;
-    color: #007cba;
-    font-weight: 600;
-}
-
-.category-tab:hover {
-    background: #f6f8fa;
-}
-
-.template-category {
-    display: none;
-}
-
-.template-category.active {
-    display: block;
-}
-
-.template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-    margin-top: 16px;
-}
-
-.template-card {
-    border: 1px solid #d0d7de;
-    border-radius: 6px;
-    padding: 12px;
-    background: #ffffff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.template-card:hover {
-    border-color: #007cba;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.template-card.selected {
-    border-color: #007cba;
-    background: #f0f8ff;
-}
-
-.template-card h5 {
-    margin: 0 0 4px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #24292e;
-}
-
-.template-card p {
-    margin: 0 0 8px 0;
-    font-size: 12px;
-    color: #656d76;
-    line-height: 1.3;
-}
-
-.template-preview {
-    background: #f6f8fa;
-    border-radius: 3px;
-    padding: 4px;
-    font-size: 10px;
-    color: #656d76;
-    margin-bottom: 8px;
-}
-
-.template-actions-card {
-    display: flex;
-    gap: 4px;
-    justify-content: space-between;
-}
-
-.template-actions-card button {
-    padding: 4px 8px;
-    font-size: 11px;
-    margin: 0;
-}
-
-.template-actions {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.template-actions button {
-    padding: 6px 12px;
-    font-size: 12px;
-    margin: 0;
-}
-
-.template-manager-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #d0d7de;
-}
-
-.template-manager-buttons button {
-    padding: 8px 16px;
-    margin: 0;
-}
-
-/* Compact Controls */
-.compact-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.compact-select {
-    flex: 1;
-    padding: 4px 6px;
-    border: 1px solid #d0d7de;
-    border-radius: 4px;
-    font-size: 12px;
-    min-width: 120px;
-}
-
-.compact-buttons {
-    display: flex;
-    gap: 4px;
-}
-
-.icon-btn.compact {
     min-width: 28px;
     height: 28px;
-    padding: 6px;
-}
-
-.compact-panel-buttons {
-    display: flex;
-    gap: 6px;
-    margin-top: 12px;
-}
-
-.btn-compact {
-    padding: 6px 10px;
-    font-size: 12px;
-    margin: 0;
+    padding: 4px;
     border-radius: 4px;
-    flex: 1;
-}
-
-/* Side by side tables */
-/* NOTE: There are two .side-by-side-tables definitions. This one is more specific (using grid)
-   and appears later, so it will override the 'display: flex' version above for non-mobile.
-   This is not strictly a "problem" but can lead to confusion if both are intended for different contexts.
-   Assuming this one is the desired modern implementation. */
-.side-by-side-tables {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 16px;
-}
-
-.side-table h2 {
-    margin-top: 0;
-    margin-bottom: 12px;
-}
-
-@media (max-width: 768px) {
-    .side-by-side-tables {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .compact-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .compact-buttons {
-        justify-content: space-around;
-    }
-}
-
-.table-controls .icon-btn {
-    background: #f5f5f5; /* Light background for the markdown button */
-    border-color: #d0d7de;
-    min-width: 32px; /* Smaller icon button for table controls */
-    height: 32px;
-    padding: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .table-controls .icon-btn:hover {
-    background: #e0e0e0;
+    background: #f6f8fa;
+    border-color: #8c959f;
+    transform: translateY(-1px);
 }
+
 
 table {
     width: 100%;
-    table-layout: fixed; /* Ensures column widths are respected */
+    table-layout: auto;
     border-collapse: collapse;
     font-size: var(--table-font-size, 14px);
     background: #ffffff;
@@ -1202,14 +905,23 @@ th, td {
 }
 
 th {
-    background: var(--table-header-bg, #f5f5f5) !important;
-    color: var(--table-header-color, #000000) !important;
+    background: var(--table-header-bg, #f8fafc) !important;
+    color: var(--table-header-color, #1f2937) !important;
     font-weight: 700;
     text-align: var(--table-text-align, left) !important;
+    border-bottom: 2px solid #e5e7eb;
 }
 
 tbody tr:hover {
-    background: var(--table-row-hover, #f6f8fa) !important;
+    background: var(--table-row-hover, #f1f5f9) !important;
+}
+
+tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+td {
+    color: #374151;
 }
 
 /* Ensure numeric column headers are right-aligned for better readability */
@@ -1295,11 +1007,9 @@ th:nth-child(n+2):not(#uniquePartTypesTable th:nth-child(5)):not(#uniquePartType
     #uniquePartTypesTable th:nth-child(9), #uniquePartTypesTable td:nth-child(9) { width: 15%; }
 }
 
-/* This tbody tr:hover rule is duplicated; removed the one that was less specific.
-   The one within 'table' rule above is more appropriate. */
-/* tbody tr:hover {
+tbody tr:hover {
     background: #f6f8fa;
-} */
+}
 
 .container {
     display: flex;
@@ -1628,100 +1338,254 @@ select:focus {
     border-color: #24292e;
     box-shadow: 0 0 0 3px rgba(36, 41, 46, 0.1);
 }
-a/* Update the .side-table and its cells */
 
-.side-by-side-tables {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* This is correct for two equal columns */
-    gap: 20px;
+/* Template Management Styles */
+.template-management {
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
     margin-bottom: 16px;
 }
 
-.side-table {
-    flex: 1; /* Still good for responsiveness, but grid handles primary layout */
-    min-width: 0; /* Allow shrinking if needed, but the grid will manage it */
+.template-management h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+    border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 4px;
 }
 
-.side-table h2 {
+.template-controls {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.template-controls select {
+    flex: 1;
+    padding: 4px 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 12px;
+    max-width: 120px;
+}
+
+.template-controls button {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 45px;
+    max-width: 60px;
+}
+
+.template-section {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.template-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #24292e;
+}
+
+/* Template Manager Modal */
+.template-manager-content {
+    width: 800px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.template-categories {
+    margin: 16px 0;
+}
+
+.category-tabs {
+    display: flex;
+    border-bottom: 1px solid #d0d7de;
+    margin-bottom: 16px;
+}
+
+.category-tab {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
     font-size: 14px;
+    margin: 0;
+    color: #656d76;
+    transition: all 0.15s;
+}
+
+.category-tab.active {
+    border-bottom-color: #007cba;
+    color: #007cba;
+    font-weight: 600;
+}
+
+.category-tab:hover {
+    background: #f6f8fa;
+    color: #24292e;
+}
+
+.template-category {
+    display: none;
+}
+
+.template-category.active {
+    display: block;
+}
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.template-card {
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.template-card:hover {
+    border-color: #007cba;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.template-card.selected {
+    border-color: #007cba;
+    background: #f0f8ff;
+}
+
+.template-card h5 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #24292e;
+}
+
+.template-card p {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #656d76;
+    line-height: 1.3;
+}
+
+.template-preview {
+    background: #f6f8fa;
+    border-radius: 3px;
+    padding: 4px;
+    font-size: 10px;
+    color: #656d76;
     margin-bottom: 8px;
 }
 
-.side-table .table-with-controls {
-    margin-bottom: 0;
-    position: static;
+.template-actions-card {
+    display: flex;
+    gap: 4px;
+    justify-content: space-between;
 }
 
-/* Ensure table controls are correctly positioned for side tables */
-.side-table .table-controls {
-    position: static; /* Prevent absolute positioning inside a grid item if it's not explicitly needed */
-    top: auto;
-    right: auto;
-    margin-bottom: 8px; /* Add some space below the controls */
-    justify-content: flex-end;
-}
-
-
-.side-table table {
+.template-actions-card button {
+    padding: 3px 6px;
     font-size: 10px;
-    width: 100%;
-    table-layout: fixed; /* Essential for precise column width control */
-    border-collapse: collapse;
-}
-
-.side-table th,
-.side-table td {
-    padding: 3px 4px !important;
-    font-size: 10px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    /* --- REMOVE OR ADJUST THIS LINE --- */
-    /* max-width: 0; <--- REMOVE THIS. It is causing the collapse. */
-    border: 1px solid #d0d7de;
-}
-
-.side-table th:first-child,
-.side-table td:first-child {
-    width: 60%; /* Give the first column more space */
-}
-
-.side-table th:last-child,
-.side-table td:last-child {
-    width: 40%; /* Give the last column less space */
-}
-
-/* Responsive design for side-by-side tables */
-@media (max-width: 768px) {
-    .side-by-side-tables {
-        flex-direction: column; /* This is for the flex version, but for grid, it's: */
-        grid-template-columns: 1fr; /* Stacks them vertically */
-        gap: 12px;
-    }
-}
-
-
-/* --- Keep your general table styling, but the crucial change is removing max-width: 0 from .side-table th, .side-table td --- */
-
-/* The rest of your CSS for general tables (outside .side-table context) */
-table {
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
-    font-size: var(--table-font-size, 14px);
-    background: #ffffff;
     margin: 0;
+    min-width: 35px;
+    max-width: 50px;
+    border-radius: 3px;
 }
 
-th, td {
-    padding: var(--table-cell-padding, 8px 12px);
-    text-align: var(--table-text-align, left);
-    border-bottom: var(--table-border-width, 1px) solid var(--table-border-color, #d0d7de);
-    white-space: var(--table-text-wrap, normal);
-    word-wrap: break-word;
-    vertical-align: var(--table-vertical-align, middle);
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.template-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
 }
-/* ... rest of your CSS ... */
+
+.template-actions button {
+    padding: 4px 8px;
+    font-size: 11px;
+    margin: 0;
+    min-width: 50px;
+    max-width: 70px;
+}
+
+.template-manager-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #d0d7de;
+}
+
+.template-manager-buttons button {
+    padding: 6px 12px;
+    margin: 0;
+    min-width: 60px;
+    max-width: 80px;
+}
+
+/* Compact Controls */
+.compact-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.compact-select {
+    flex: 1;
+    padding: 4px 6px;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    font-size: 12px;
+    min-width: 100px;
+    max-width: 140px;
+}
+
+.compact-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.icon-btn.compact {
+    min-width: 28px;
+    height: 28px;
+    padding: 6px;
+}
+
+.compact-panel-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.btn-compact {
+    padding: 6px 10px;
+    font-size: 12px;
+    margin: 0;
+    border-radius: 4px;
+    min-width: 60px;
+    max-width: 80px;
+    background: #007cba;
+    color: white;
+    border: 1px solid #007cba;
+}
+
+.btn-compact:hover {
+    background: #005a87;
+    border-color: #005a87;
+}

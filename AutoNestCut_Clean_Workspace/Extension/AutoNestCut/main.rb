@@ -43,6 +43,33 @@ require_relative 'util'
 
 module AutoNestCut
 
+  # Utility method for cache-busting HTML dialogs
+  def self.set_html_with_cache_busting(dialog, html_file_path)
+    cache_buster = Time.now.to_i.to_s
+    
+    # Read the HTML content
+    html_content = File.read(html_file_path, encoding: 'UTF-8')
+    
+    # Replace relative paths with cache-busted absolute paths
+    html_content.gsub!(/(src|href)="(?!https?:\/\/)([^"]*?)"/) do |match|
+      type = $1 # 'src' or 'href'
+      relative_path = $2 # The actual path
+      
+      # Skip if it's already an absolute URL or data URL
+      next match if relative_path.start_with?('http', 'data:', '//')
+      
+      # Construct absolute path from the directory of the HTML file
+      absolute_path = File.join(File.dirname(html_file_path), relative_path)
+      absolute_url = "file:///#{File.expand_path(absolute_path).gsub('\\', '/')}"
+      
+      # Append cache buster
+      "#{type}=\"#{absolute_url}?v=#{cache_buster}\""
+    end
+    
+    # Set the modified HTML content
+    dialog.set_html(html_content)
+  end
+
   # Define constants for the extension (good practice for registration)
   EXTENSION_NAME = 'Auto Nest Cut'.freeze
   EXTENSION_VERSION = '1.0.0'.freeze # Placeholder, update as needed
@@ -70,7 +97,7 @@ module AutoNestCut
         style: UI::HtmlDialog::STYLE_DIALOG
       )
 
-      dialog.set_file(html_file)
+      AutoNestCut.set_html_with_cache_busting(dialog, html_file)
       dialog.show
     else
       UI.messagebox("Documentation file not found at: #{html_file}")
@@ -157,7 +184,7 @@ module AutoNestCut
       height: 500
     )
     
-    dialog.set_file(html_file)
+    AutoNestCut.set_html_with_cache_busting(dialog, html_file)
     
     # Add callbacks for scheduler operations
     dialog.add_action_callback('add_scheduled_task') do |context, name, hour, filters, format, email|
@@ -198,7 +225,7 @@ module AutoNestCut
       height: 700
     )
     
-    dialog.set_file(html_file)
+    AutoNestCut.set_html_with_cache_busting(dialog, html_file)
     
     # Initialize facade analyzer
     analyzer = FacadeAnalyzer.new

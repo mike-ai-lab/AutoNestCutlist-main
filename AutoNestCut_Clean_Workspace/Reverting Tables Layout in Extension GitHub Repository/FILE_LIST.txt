@@ -1,0 +1,37 @@
+AutoNestCut Reporter - Stacked Layout Files
+============================================
+
+Downloaded from commit: 44e376e64218311cddecc2f2d7510cc20cf74c25
+Date: November 24, 2025
+Repository: https://github.com/mike-ai-lab/AutoNestCutlist-main
+
+Files included:
+---------------
+
+1. main.html (62 KB)
+   - Main reporter HTML with STACKED table layout
+   - Tables displayed vertically (Materials Used above Overall Summary)
+   
+2. style.css (26 KB)
+   - CSS WITHOUT side-by-side layout classes
+   - Verified: NO .side-by-side-tables classes present
+   
+3. table_customization.js (21 KB)
+   - Table customization JavaScript
+   
+4. diagrams_report.js (53 KB)
+   - Diagrams and report rendering JavaScript
+
+5. REVERSION_INSTRUCTIONS.md
+   - Complete guide on how to revert to stacked layout
+   - Includes commit history and verification steps
+
+6. FILE_LIST.txt (this file)
+   - Quick reference of package contents
+
+Installation Path:
+------------------
+Copy these files to:
+AutoNestCut_Clean_Workspace/Extension/AutoNestCut/ui/html/
+
+IMPORTANT: Backup your current files before replacing!

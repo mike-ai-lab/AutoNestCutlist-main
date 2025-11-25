@@ -500,15 +500,9 @@ function renderReport() {
             const dimensionsStr = `${formatNumber(width, reportPrecision)} × ${formatNumber(height, reportPrecision)}`;
             const partSymbol = window.currencySymbols[part.currency] || part.currency;
             
-            let costLevel = 'avg', costColor = '#ffa500', costText = 'Standard';
-            if (part.cost > avgCost * 1.2) { costLevel = 'high'; costColor = '#ff4444'; costText = 'Premium'; }
-            else if (part.cost < avgCost * 0.8 && part.cost > 0) { costLevel = 'low'; costColor = '#44aa44'; costText = 'Budget'; }
-            
-            // Use custom labels if available - check both window.textLabels and global textLabels
-            const labels = window.textLabels || (typeof textLabels !== 'undefined' ? textLabels : null);
-            if (labels && labels.costLevels) {
-                costText = labels.costLevels[costLevel] || costText;
-            }
+            let costLevel = 'avg', costColor = '#ffa500', costText = 'Average';
+            if (part.cost > avgCost * 1.2) { costLevel = 'high'; costColor = '#ff4444'; costText = 'High'; }
+            else if (part.cost < avgCost * 0.8 && part.cost > 0) { costLevel = 'low'; costColor = '#44aa44'; costText = 'Low'; }
             
             partsHtml += `
                 <tr data-part-id="${partId}" data-board-number="${part.board_number}" data-cost-level="${costLevel}">
@@ -1231,4 +1225,24 @@ function initResizer() {
             document.body.style.userSelect = '';
         }
     });
+}
+
+function exportInteractiveHTML() {
+    if (!g_reportData || !g_boardsData) {
+        alert('No report data available for HTML export.');
+        return;
+    }
+    
+    const reportDataJSON = JSON.stringify({
+        diagrams: g_boardsData,
+        report: g_reportData,
+        original_components: window.originalComponents || [],
+        hierarchy_tree: window.hierarchyTree || []
+    });
+    
+    if (typeof callRuby === 'function') {
+        callRuby('export_interactive_html', reportDataJSON);
+    } else {
+        alert('Export function not available');
+    }
 }

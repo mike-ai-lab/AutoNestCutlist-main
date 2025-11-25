@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Architecture Portfolio for Revie - Muhamad Shkeir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.95/build/spline-viewer.js"></script>
+
+    <style>
+        /* Define custom font sizes using CSS variables */
+        :root {
+            --text-hero-title: 3rem; /* Adjusted for more impact */
+            --text-hero-subtitle: 1.25rem; /* Adjusted */
+            --text-section-title: 2.5rem; /* Adjusted */
+            --text-project-title: 1.5rem; /* Adjusted */
+            --text-body-lg: 1rem; /* Adjusted */
+            --text-body-md: 0.9rem; /* Adjusted */
+            --text-nav-link: 0.95rem; /* Adjusted for nav */
+        }
+
+        /* Ensure HTML and body take full height and hide overflow for the background Spline */
+        html, body {
+            height: 100%;
+            margin: 0;
+            /* Removed overflow: hidden to allow scrolling on mobile */
+        }
+        body {
+            font-family: 'Roboto', sans-serif; /* Changed to Roboto as primary font */
+            background-color: #000000; /* Pure black background for maximum contrast */
+            color: #E0E0E0; /* Light gray text for contrast */
+            display: flex;
+            flex-direction: column;
+            position: relative; /* Needed for z-index context */
+        }
+
+        /* Custom styles for spline-viewer to ensure it fills the entire viewport as a background */
+        spline-viewer {
+            position: fixed; /* Fixed position to cover the entire viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: -1; /* Place it behind all other content */
+        }
+
+        /* Overlay layer for improved text readability */
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Increased opacity to 0.6 for better readability */
+            z-index: 0; /* Between spline-viewer and content-wrapper */
+            pointer-events: none; /* Allow events to pass through to spline-viewer if needed */
+        }
+
+        /* Container for all foreground content to sit on top of the Spline */
+        .content-wrapper {
+            position: relative; /* Allows content to be positioned on top of Spline */
+            z-index: 1; /* Ensures content is above Spline and overlay */
+            flex-grow: 1; /* Allows it to take up available space */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Allow scrolling for content */
+            min-height: 100vh; /* Ensure content wrapper takes at least full viewport height */
+            /* Crucial for Spline interactivity: allow pointer events to pass through */
+            pointer-events: none;
+        }
+
+        /* Re-enable pointer events for interactive elements within content-wrapper */
+        .content-wrapper header,
+        .content-wrapper nav a,
+        .content-wrapper main,
+        .content-wrapper footer {
+            pointer-events: auto;
+        }
+
+        /* Re-enable pointer events for specific elements within main */
+        .content-wrapper main section,
+        .content-wrapper main button,
+        .content-wrapper main a,
+        .project-card {
+            pointer-events: auto;
+        }
+
+        /* Section backgrounds and blur completely removed */
+        section {
+            background-color: transparent; /* No background for sections */
+            backdrop-filter: none; /* No blur */
+            border-radius: 0; /* No border-radius */
+            box-shadow: none; /* No shadow */
+            padding: 4rem 0; /* More vertical space for sections */
+            text-align: left; /* Consistent left alignment for all section content */
+        }
+
+        /* Project card background adjusted for readability over Spline */
+        .project-card {
+            background-color: rgba(10, 10, 10, 0.7); /* Slightly transparent dark background for cards */
+            backdrop-filter: blur(3px); /* Very subtle blur for cards to help readability */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.6), 0 6px 10px -3px rgba(0, 0, 0, 0.3); /* Darker, more pronounced shadows */
+            padding: 3rem; /* More padding inside cards */
+            margin-bottom: 3rem; /* Add space between project cards */
+        }
+
+        /* Styling for the loading spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3); /* Lighter border for dark theme */
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #00FFFF; /* Pure Aqua for spinner */
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Message box adjustments for dark theme */
+        #messageBox > div {
+            background-color: #1A1A1A; /* Dark background for message box */
+            color: #E0E0E0;
+        }
+        #messageBoxTitle {
+            color: #FFFFFF;
+        }
+
+        /* Custom text size classes */
+        .text-hero-title { font-size: var(--text-hero-title); font-weight: 700; text-align: center; } /* Roboto Bold, center for hero */
+        .text-hero-subtitle { font-size: var(--text-hero-subtitle); font-weight: 700; text-align: center; } /* Roboto Bold, center for hero */
+        .text-section-title { font-size: var(--text-section-title); font-weight: 700; text-align: left; } /* Roboto Bold, left for sections */
+        .text-project-title { font-size: var(--text-project-title); font-weight: 700; text-align: left; } /* Roboto Bold, left for projects */
+        .text-body-lg { font-size: var(--text-body-lg); text-align: left; }
+        .text-body-md { font-size: var(--text-body-md); text-align: left; }
+        .text-nav-link { font-size: var(--text-nav-link); }
+
+        /* Responsive adjustments for custom text sizes */
+        @media (max-width: 768px) {
+            :root {
+                --text-hero-title: 2rem; /* ~32px */
+                --text-hero-subtitle: 1rem; /* ~16px */
+                --text-section-title: 1.8rem; /* ~28.8px */
+                --text-project-title: 1.25rem; /* ~20px */
+                --text-body-lg: 0.875rem; /* ~14px */
+                --text-body-md: 0.75rem; /* ~12px */
+                --text-nav-link: 0.8rem; /* ~12.8px */
+            }
+            section {
+                padding: 2.5rem 0; /* Less vertical space on mobile */
+            }
+            .project-card {
+                padding: 2rem; /* Less padding on mobile */
+                margin-bottom: 2.5rem; /* Less space between cards on mobile */
+            }
+        }
+
+        /* Styles for the fixed Gemini button */
+        #geminiButton {
+            position: fixed;
+            bottom: 1.5rem; /* Slightly decreased */
+            left: 1.5rem; /* Slightly decreased */
+            z-index: 100; /* Ensure it's above other content */
+            background-color: #007BFF; /* Pure blue, no purple/pink */
+            color: white;
+            border-radius: 9999px; /* Fully rounded */
+            padding: 0.8rem; /* Slightly decreased */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #geminiButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Styling for the Gemini SVG icon */
+        #geminiButton svg {
+            width: 1.8rem; /* Slightly decreased */
+            height: 1.8rem; /* Slightly decreased */
+            fill: currentColor; /* Use the parent's color for the icon */
+        }
+
+        /* Chat window styles */
+        #geminiChatWindow {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            width: 380px; /* Slightly wider */
+            height: 520px; /* Slightly taller */
+            background-color: rgba(26, 26, 26, 0.98); /* Less transparent, darker */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8); /* Stronger shadow */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99;
+            transform: translateY(100%) scale(0.8);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        #geminiChatWindow.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #geminiChatHeader {
+            background-color: #1A1A1A; /* Very dark header */
+            color: #00FFFF; /* Aqua for header text */
+            padding: 1rem 1.25rem; /* More padding */
+            border-top-left-radius: 1.5rem;
+            border-top-right-radius: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        #geminiChatCloseBtn {
+            background: none;
+            border: none;
+            color: #00FFFF; /* Aqua close button */
+            font-size: 1.5rem; /* Larger close icon */
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+        #geminiChatCloseBtn:hover {
+            background-color: rgba(0, 255, 255, 0.1); /* Subtle aqua hover */
+        }
+
+        #geminiChatMessages {
+            flex-grow: 1;
+            padding: 1.25rem; /* More padding */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem; /* Slightly more space between messages */
+            scroll-behavior: smooth;
+            background-color: #0A0A0A; /* Even darker background for messages */
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 0.8rem 1.2rem; /* More padding */
+            border-radius: 1rem; /* More rounded */
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 0.95rem; /* Slightly larger message text */
+        }
+
+        .chat-message.user {
+            background-color: #007BFF; /* Blue for user messages */
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.5rem; /* Smoother bottom corner */
+        }
+
+        .chat-message.gemini {
+            background-color: #333; /* Dark gray for Gemini messages */
+            color: #E0E0E0;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.5rem; /* Smoother bottom corner */
+        }
+
+        #geminiChatInputContainer {
+            display: flex;
+            padding: 1.25rem; /* More padding */
+            border-top: 1px solid #444;
+            background-color: #1A1A1A; /* Consistent background */
+        }
+
+        #geminiChatInput {
+            flex-grow: 1;
+            background-color: #2A2A2A; /* Darker input field */
+            border: 1px solid #555;
+            border-radius: 0.75rem;
+            padding: 0.8rem 1rem; /* More padding */
+            color: white;
+            outline: none;
+            resize: none;
+            min-height: 45px; /* Ensure it's not too small */
+            max-height: 120px; /* Allow more lines */
+            overflow-y: auto;
+            font-size: 0.95rem;
+        }
+
+        #geminiChatSendBtn {
+            background-color: #00FFFF; /* Aqua for send button */
+            color: #1A1A1A; /* Dark text for contrast */
+            border-radius: 0.75rem;
+            padding: 0.8rem 1.2rem; /* More padding */
+            margin-left: 0.8rem; /* More margin */
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        #geminiChatSendBtn:hover {
+            background-color: #00E0E0; /* Slightly darker aqua on hover */
+            transform: translateY(-2px);
+        }
+
+        /* Suggested starter messages styling */
+        .starter-message {
+            background-color: rgba(0, 123, 255, 0.2); /* Light blue transparent background */
+            color: #00FFFF; /* Aqua text */
+            padding: 0.6rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.85rem;
+            align-self: flex-start; /* Align with Gemini messages */
+            border: 1px solid rgba(0, 255, 255, 0.3); /* Subtle aqua border */
+        }
+        .starter-message:hover {
+            background-color: rgba(0, 123, 255, 0.35); /* Slightly more blue, no purple */
+        }
+
+        /* Responsive adjustments for chat window */
+        @media (max-width: 768px) {
+            #geminiChatWindow {
+                width: 95%; /* Wider on small screens */
+                height: 80%; /* Taller on small screens */
+                left: 2.5%; /* Center horizontally */
+                bottom: 1rem; /* Closer to bottom */
+            }
+            #geminiButton {
+                bottom: 1rem;
+                left: 1rem;
+                padding: 0.6rem; /* Further reduced for mobile */
+            }
+            #geminiButton svg {
+                width: 1.2rem; /* Further reduced for mobile */
+                height: 1.2rem; /* Further reduced for mobile */
+            }
+            section {
+                padding: 2.5rem 0; /* Less vertical space on mobile */
+                text-align: left; /* Always left on mobile */
+            }
+        }
+
+        /* Terminal font style for markdown */
+        .terminal-font {
+            font-family: 'monospace', 'Courier New', Courier, sans-serif;
+            background-color: rgba(50, 50, 50, 0.6); /* Slightly lighter background for the code snippet */
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.3rem;
+            font-size: 0.875rem; /* Slightly smaller for inline code */
+            color: #00FFFF; /* Aqua color for code terms */
+        }
+
+        /* Creative overlap for About Me heading */
+        #about h3 {
+            position: relative; /* Enable positioning */
+            margin-top: -3rem; /* Adjust this value to control overlap */
+            z-index: 10; /* Ensure it's above the image */
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5); /* Subtle glow for emphasis */
+        }
+
+        /* Responsive adjustment for About Me heading overlap */
+        @media (max-width: 768px) {
+            #about h3 {
+                margin-top: -2rem; /* Less overlap on smaller screens */
+            }
+        }
+
+        /* New style for the text container in About Me section */
+        #about .md\:w-2\/3 {
+            background-color: rgba(10, 10, 10, 0.85); /* More opaque background for the text */
+            backdrop-filter: blur(5px); /* Slightly more blur for the text background */
+            border-radius: 1.5rem; /* Consistent rounded corners */
+            padding: 2rem; /* Add padding to the text container */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+            text-align: left;
+        }
+        /* Force Get in Touch button to use blue-cyan gradient, not purple/pink */
+        .bg-gradient-to-r.from-blue-600.to-cyan-500 {
+            background-image: linear-gradient(to right, #007BFF, #00FFFF) !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <spline-viewer url="https://prod.spline.design/w3Z5es0PdiqdqcY2/scene.splinecode"></spline-viewer>
+    <div class="background-overlay"></div>
+
+    <div class="content-wrapper">
+        <header class="bg-transparent py-4 px-6 md:px-12">
+            <div class="container mx-auto flex justify-end items-center">
+                <nav>
+                    <ul class="flex space-x-6">
+                        <li><a href="#introduction" class="text-gray-200 hover:text-cyan-400 transition duration-300 text-nav-link">Introduction</a></li>
+                        <li><a href="#projects" class="text-gray-200 hover:text-cyan-400 transition duration-300 text-nav-link">Projects</a></li>
+                        <li><a href="#contact" class="text-gray-200 hover:text-cyan-400 transition duration-300 text-nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main class="flex-grow container mx-auto px-6 py-8 md:py-12">
+            <section id="introduction" class="text-center mb-16 py-12 text-white">
+                <h2 class="font-extrabold mb-4 leading-tight text-hero-title">Operational AI Systems for Architecture & Design Management</h2>
+                <p class="opacity-90 max-w-3xl mx-auto text-hero-subtitle font-bold">
+                    In today’s design landscape, efficiency isn’t optional—it’s critical. This collection of workflows was built to address recurring pain points across real projects—brief ambiguity, team bottlenecks, file disorganization, and misaligned deliveries. Each system is the product of hands-on debugging, testing, and deployment within the constraints of real timelines.
+                </p>
+            </section>
+
+            <section id="about" class="p-8 mb-16">
+                <h3 class="font-bold text-white mb-6 text-section-title text-center md:text-left">About Me</h3>
+                <div class="flex flex-col md:flex-row items-center md:space-x-8">
+                    <div class="md:w-1/3 mb-6 md:mb-0">
+                        <img src="https://i.postimg.cc/9FHkFnPF/myimg.jpg" onerror="this.onerror=null;this.src='https://placehold.co/192x192/000000/FFFFFF?text=Muhamad+Shkeir';" alt="Muhamad Shkeir" class="rounded-full w-48 h-48 mx-auto object-cover shadow-md border-4 border-cyan-500 transform hover:scale-105 hover:shadow-xl transition-all duration-300">
+                    </div>
+                    <div class="md:w-2/3 text-gray-200 leading-relaxed text-body-lg">
+                        <p class="mb-4">
+                            I’m focused on streamlining architectural and design processes using <span class="terminal-font">AI-driven systems</span>. Within my current role as an interior designer in Riyadh, I’ve led workflow automation in the technical department—especially for data-centric tasks such as <span class="terminal-font">BOQs</span>, <span class="terminal-font">CAD documentation</span>, and drawing revisions. I engineered systems that streamlined design feedback loops, auto-updated quantity sheets, and reduced human errors across project stages using <span class="terminal-font">AI-assisted parsing</span>, <span class="terminal-font">triggers</span>, and <span class="terminal-font">smart logic</span>.
+                        </p>
+                        <p>
+                            In parallel, I operate an online design studio where I experiment with layered <span class="terminal-font">AI pipelines</span> to reduce bottlenecks across inquiries, visualization, and brand systems. Before listing a few key systems, it’s worth stating—these weren’t abstract tests. Each emerged from real constraints and needs, structured into workflows that respond, adapt, and scale across design operations.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects" class="mb-16 p-8">
+                <p class="opacity-90 max-w-3xl mx-auto text-hero-subtitle font-bold text-center mb-12">
+                    These solutions reflect how I approach design and project management—through structured logic, trigger-based automations, and scalable operations. Though originally developed for use across my studio and contracting work, this set was curated with Revie in focus—its forward-thinking culture and product-driven ethos.
+                </p>
+                <div class="grid grid-cols-1 gap-12">
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">01. AI-Based Design Visualization Acceleration</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Rapid Moodboard Creation, Scene Drafting, and Asset Tagging</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Midjourney</span>, <span class="terminal-font">ComfyUI</span>, <span class="terminal-font">Supabase JS</span>, <span class="terminal-font">SketchUp</span>, <span class="terminal-font">Corona</span>, <span class="terminal-font">D5</span>, <span class="terminal-font">Photoshop</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Prompted scene requests sent to <span class="terminal-font">Midjourney</span> via curated prompt templates</li>
+                            <li>Output assets auto-tagged using <span class="terminal-font">Supabase JS</span> and linked to <span class="terminal-font">SketchUp model assets</span></li>
+                            <li>Batch processed through <span class="terminal-font">ComfyUI</span> for enhancement</li>
+                            <li><span class="terminal-font">Photoshop</span> auto-runs macro via watch-folder triggers</li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Moodboard prep time reduced from hours to 90 mins</li>
+                            <li>Taggable visual assets aligned to each project phase</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">02. Meshroom + Photogrammetry AI Workflow</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Visual-to-Model Conversion with Scene Intelligence</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Meshroom</span>, <span class="terminal-font">Blender</span>, <span class="terminal-font">OpenCV</span>, <span class="terminal-font">Python Scripts</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Interior space images captured via phone are batch-processed</li>
+                            <li><span class="terminal-font">Meshroom</span> reconstructs a <span class="terminal-font">3D model</span> using photogrammetry</li>
+                            <li><span class="terminal-font">OpenCV</span> scans images for boundary and surface intelligence</li>
+                            <li>Nodes like <span class="terminal-font">Meshing_1</span>, <span class="terminal-font">Texturing_1</span>, and <span class="terminal-font">DepthMapFilter_1</span> generate textured meshes with accurate spatial data</li>
+                            <li>Output refined in <span class="terminal-font">Blender</span> and overlaid with dimensions</li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Eliminated manual site measurements for draft models</li>
+                            <li>Accelerated early-stage design mapping for renovations and furniture planning</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">03. AI-Driven Design Automation for Client Briefing & Budgeting</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Intelligent Brief Extraction, Auto Email Parsing, Budget Structuring</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Mistral (local LLM)</span>, <span class="terminal-font">n8n</span>, <span class="terminal-font">Supabase</span>, <span class="terminal-font">Ollama</span>, <span class="terminal-font">Gmail Trigger</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>When a client email arrives, the <span class="terminal-font">Gmail Trigger</span> node captures the message</li>
+                            <li>The snippet is sent via <span class="terminal-font">HTTP request</span> to <span class="terminal-font">Mistral</span>, a locally hosted <span class="terminal-font">LLM</span></li>
+                            <li><span class="terminal-font">Mistral</span> extracts the project type, location, budget, and style using <span class="terminal-font">structured pattern matching</span></li>
+                            <li>Extracted fields are cleaned with <span class="terminal-font">.replace(/^=\s*/, '')</span> and stored in <span class="terminal-font">Supabase</span></li>
+                            <li><span class="terminal-font">n8n</span> formats a personalized reply using:</li>
+                            <li><span class="terminal-font">`{{$json["payload"]["headers"].find(header => header.name === "From").value}}`</span></li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Response time dropped to under 10 seconds post-inquiry</li>
+                            <li>Manual copy/paste errors eliminated entirely</li>
+                            <li>New dashboard entries instantly ready for team allocation</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">04. AI Workflow for Interior & FF&E Task Delegation</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Design Scope Breakdown, Task Assignment, and Budget Checkpoints</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Flowise</span>, <span class="terminal-font">Supabase</span>, <span class="terminal-font">AutoLISP</span>, <span class="terminal-font">ChatGPT Functions</span>, <span class="terminal-font">Notion API</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li><span class="terminal-font">Flowise form</span> receives design scope → split into structured deliverables</li>
+                            <li>Tasks are written to <span class="terminal-font">Notion DB</span> with live status and ownership fields</li>
+                            <li><span class="terminal-font">Supabase scripts</span> cross-check quantities with <span class="terminal-font">pricing logic</span></li>
+                            <li>Mismatch triggers alerts to revalidate items or scope tiers</li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Reduced planning miscommunication between design and procurement</li>
+                            <li>Auto-budget checks prevented overspend at pre-design stage</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">05. Real-Time Admin Panel for Project Asset Management</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Local Toolchain for Media & Metadata Control</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">React</span>, <span class="terminal-font">Tailwind</span>, <span class="terminal-font">Supabase</span>, <span class="terminal-font">Mistral (offline)</span>, <span class="terminal-font">GPT functions</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li><span class="terminal-font">Drag-and-drop file upload</span> syncs media to <span class="terminal-font">Supabase</span></li>
+                            <li><span class="terminal-font">Mistral</span> generates descriptions and tags for the asset</li>
+                            <li>Metadata saved and displayed in a <span class="terminal-font">visual dashboard</span> with <span class="terminal-font">filter options</span></li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Designers and teams could access annotated media with zero manual cataloging</li>
+                            <li>Centralized asset control for better meeting prep and version tracking</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">06. AI-Optimized CAD and Documentation Workflow</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Script Automation for Technical Drawings and BOQs</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">AutoLISP</span>, <span class="terminal-font">ChatGPT Functions</span>, <span class="terminal-font">Excel Scripting</span>, <span class="terminal-font">Supabase</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li><span class="terminal-font">AutoLISP scripts</span> batch-edit annotations and <span class="terminal-font">purge redundant notes</span> from <span class="terminal-font">CAD</span></li>
+                            <li><span class="terminal-font">ChatGPT</span> refines <span class="terminal-font">notation tone</span> and adjusts <span class="terminal-font">dimension labels</span> for presentation</li>
+                            <li><span class="terminal-font">Excel-based BOQs</span> run through <span class="terminal-font">structured scripts</span> to <span class="terminal-font">auto-update prices</span> and <span class="terminal-font">link quantities to Supabase</span></li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Reduced documentation prep time by over 70%</li>
+                            <li>Lowered revision frequency due to upfront automation and formatting checks</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">07. Smart Scheduling and Prompt-Based Portfolio Generator</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Task Prioritization and Content Structuring for Portfolios</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Lovable.ai</span>, <span class="terminal-font">Flowise</span>, <span class="terminal-font">GPT-4</span>, <span class="terminal-font">Tailwind</span>, <span class="terminal-font">Supabase</span>, <span class="terminal-font">Spline</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>User prompts <span class="terminal-font">GPT-4</span> with project details → <span class="terminal-font">flow validates</span> and <span class="terminal-font">builds section structure</span></li>
+                            <li><span class="terminal-font">Design blocks</span> and <span class="terminal-font">component copy auto-filled</span></li>
+                            <li><span class="terminal-font">Spline handles visuals</span>; <span class="terminal-font">sessions saved live</span> via <span class="terminal-font">Supabase</span> to continue editing later</li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Generated export-ready design portfolios in minutes—not days</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">08. Agentic AI Workflows for Design Ops & Branding</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Self-triggering Processes, Brand Asset Coordination, Git-Integrated Updates</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">Supabase Functions</span>, <span class="terminal-font">n8n</span>, <span class="terminal-font">GPT-4 Agents</span>, <span class="terminal-font">React</span>, <span class="terminal-font">Tailwind</span>, <span class="terminal-font">Ollama</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>File or folder changes trigger <span class="terminal-font">n8n agents</span> to <span class="terminal-font">audit branding files</span></li>
+                            <li><span class="terminal-font">Agents run logic</span> to <span class="terminal-font">verify tag structure</span>, <span class="terminal-font">naming</span>, and <span class="terminal-font">update timestamps</span></li>
+                            <li>Conflicts are fixed or flagged via <span class="terminal-font">automated prompts</span></li>
+                            <li>Branding changes pushed to <span class="terminal-font">GitHub</span> and <span class="terminal-font">CMS live</span></li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Brand system versioning became frictionless</li>
+                            <li>Updates no longer blocked by team availability</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-card">
+                        <h4 class="font-semibold text-white mb-4 text-project-title">09. Business Discovery Engine – Leads Inspector</h4>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">AI Role:</strong> Global Business Discovery, Contact Insights, Search Filtering</p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">Used:</strong> <span class="terminal-font">React</span>, <span class="terminal-font">Tailwind</span>, <span class="terminal-font">Google Maps API</span>, <span class="terminal-font">Email Validation APIs</span>, <span class="terminal-font">Local Scrapers</span></p>
+                        <p class="text-gray-300 text-body-md mb-3"><strong class="text-cyan-300">How it works:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>User selects category and location, either city-specific or worldwide</li>
+                            <li>System queries <span class="terminal-font">Google-based APIs</span> to locate relevant businesses</li>
+                            <li>Contacts, emails, and websites are scraped and listed with <span class="terminal-font">validation status</span></li>
+                            <li>Favorites, job listings, and <span class="terminal-font">map integrations</span> provide deeper profiling</li>
+                        </ul>
+                        <p class="text-gray-300 text-body-md"><strong class="text-cyan-300">Impact:</strong></p>
+                        <ul class="list-disc list-inside text-gray-300 text-body-md ml-6 mb-3 space-y-1">
+                            <li>Helped locate contractors and suppliers based on precise location & service type</li>
+                            <li>Used to discover companies globally for partnerships, sourcing, and outreach</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="p-8">
+                <h3 class="font-bold text-white text-center mb-8 text-section-title">Let's Connect!</h3>
+                <div class="max-w-xl mx-auto text-center text-gray-200 text-body-lg font-bold">
+                    <p class="mb-4">These workflows didn’t just save time—they redefined how design operations function. <span class="terminal-font">Trigger-based execution</span> replaced <span class="terminal-font">manual coordination</span>, <span class="terminal-font">logic chains</span> drove <span class="terminal-font">automation</span>, and each node worked as a <span class="terminal-font">responsive system</span>.</p>
+                    <p class="mb-4">AI evolves fast—blink, and you’ll be left behind.</p>
+                    <p class="mb-2">Email: <a href="mailto:muhamad.shkeir@gmail.com" class="text-cyan-300 hover:underline">muhamad.shkeir@gmail.com</a></p>
+                    <p>Location: Riyadh, Saudi Arabia</p>
+                    <div class="mt-6">
+                        <a href="mailto:muhamad.shkeir@gmail.com" class="inline-block bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition duration-300">
+                            Get in Touch
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-transparent text-white py-6 px-6 md:px-12 mt-8">
+            <div class="container mx-auto text-center text-body-md">
+                <p>&copy; 2025 Muhamad Shkeir. All rights reserved.</p>
+                <div class="flex justify-center space-x-4 mt-2">
+                    <a href="https://www.linkedin.com/in/muhammad-shkeir/" target="_blank" class="text-gray-200 hover:text-white transition duration-300">LinkedIn</a>
+                    <a href="https://www.instagram.com/muhamad.a.shk/" target="_blank" class="text-gray-200 hover:text-white transition duration-300">Instagram</a>
+                    <a href="https://www.behance.net/muhamadshkeir" target="_blank" class="text-gray-200 hover:text-white transition duration-300">Behance</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <button id="geminiButton">
+        <svg class="gemini-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20Z" fill="currentColor"/>
+            <path d="M13.54 8.23L12 5L10.46 8.23L7 9.1L9.5 11.5L8.91 14.89L12 13.26L15.09 14.89L14.5 11.5L17 9.1L13.54 8.23Z" fill="currentColor"/>
+        </svg>
+    </button>
+
+    <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-xl max-w-sm w-full text-center border border-cyan-600">
+            <h4 id="messageBoxTitle" class="text-xl font-bold mb-4 text-cyan-400"></h4>
+            <p id="messageBoxContent" class="text-gray-300 mb-6"></p>
+            <button id="messageBoxClose" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">Close</button>
+        </div>
+    </div>
+
+    <div id="geminiChatWindow" class="hidden">
+        <div id="geminiChatHeader">
+            <span>Chat with Gimmy</span>
+            <button id="geminiChatCloseBtn">&times;</button>
+        </div>
+        <div id="geminiChatMessages">
+            <div class="chat-message gemini">Hello Revie Team! I am Gimmy, the AI portfolio guardian for Muhamad. How can I assist you with information regarding his career journey?</div>
+            <div class="starter-message" data-message="Tell me about Muhamad journey with the AI tech.">Tell me about Muhamad journey with the AI tech.</div>
+            <div class="starter-message" data-message="How does Muhamad used the automations?">How does Muhamad used the automations?</div>
+            <div class="starter-message" data-message="What software is Muhamad efficient with?">What software is Muhamad efficient with?</div>
+            <div class="starter-message" data-message="What are Muhamad's contact details?">What are Muhamad's contact details?</div>
+        </div>
+        <div id="geminiChatInputContainer">
+            <textarea id="geminiChatInput" placeholder="Type your message..." rows="1"></textarea>
+            <button id="geminiChatSendBtn">Send</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // Function to display custom message box instead of alert()
+        function showMessageBox(title, message) {
+            const messageBox = document.getElementById('messageBox');
+            document.getElementById('messageBoxTitle').textContent = title;
+            document.getElementById('messageBoxContent').textContent = message;
+            messageBox.classList.remove('hidden');
+        }
+
+        document.getElementById('messageBoxClose').addEventListener('click', () => {
+            document.getElementById('messageBox').classList.add('hidden');
+        });
+
+        // Function to format markdown bold, newlines, and links
+        function formatMarkdown(text) {
+            let formattedText = text;
+
+            // Replace **text** with <strong>text</strong>
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // Replace URLs with clickable links
+            // This regex matches http/https URLs. It's important to make sure it's robust.
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            formattedText = formattedText.replace(urlRegex, '<a href="$1" target="_blank" class="text-blue-400 hover:underline">$1</a>');
+
+            // Replace newlines with <br> tags
+            formattedText = formattedText.replace(/\n/g, '<br>');
+
+            return formattedText;
+        }
+
+        // Gemini Chat Functionality
+        const geminiButton = document.getElementById('geminiButton');
+        const geminiChatWindow = document.getElementById('geminiChatWindow');
+        const geminiChatCloseBtn = document.getElementById('geminiChatCloseBtn');
+        const geminiChatMessages = document.getElementById('geminiChatMessages');
+        const geminiChatInput = document.getElementById('geminiChatInput');
+        const geminiChatSendBtn = document.getElementById('geminiChatSendBtn');
+        const starterMessages = document.querySelectorAll('.starter-message');
+
+        // Define the initial system instruction content
+        const portfolioContent = `
+Operational AI Systems for Architecture & Design Management
+In today’s design landscape, efficiency isn’t optional—it’s critical. This collection of workflows was built to address recurring pain points across real projects—brief ambiguity, team bottlenecks, file disorganization, and misaligned deliveries. Each system is the product of hands-on debugging, testing, and deployment within the constraints of real timelines.
+These solutions reflect how Muhamad approaches design and project management—through structured logic, trigger-based automations, and scalable operations. Though originally developed for use across his studio and contracting work, this set was curated with Revie in focus—its forward-thinking culture and product-driven ethos.
+
+About Me
+Muhamad is focused on streamlining architectural and design processes using AI-driven systems. Within his current role as an interior designer in Riyadh, he has led workflow automation in the technical department—especially for data-centric tasks such as BOQs, CAD documentation, and drawing revisions. He engineered systems that streamlined design feedback loops, auto-updated quantity sheets, and reduced human errors across project stages using AI-assisted parsing, triggers, and smart logic.
+In parallel, he operates an online design studio where he experiments with layered AI pipelines to reduce bottlenecks across inquiries, visualization, and brand systems. Before listing a few key systems, it’s worth stating—these weren’t abstract tests. Each emerged from real constraints and needs, structured into workflows that respond, adapt, and scale across design operations.
+
+Projects:
+01. AI-Based Design Visualization Acceleration
+AI role: Rapid Moodboard Creation, Scene Drafting, and Asset Tagging
+Used: Midjourney, ComfyUI, Supabase JS, SketchUp, Corona, D5, Photoshop
+How it works:
+Prompted scene requests sent to Midjourney via curated prompt templates
+Output assets auto-tagged using Supabase JS and linked to SketchUp model assets
+Batch processed through ComfyUI for enhancement
+Photoshop auto-runs macro via watch-folder triggers
+Impact:
+Moodboard prep time reduced from hours to 90 mins
+Taggable visual assets aligned to each project phase
+
+02. Meshroom + Photogrammetry AI Workflow
+AI role: Visual-to-Model Conversion with Scene Intelligence
+Used: Meshroom, Blender, OpenCV, Python Scripts
+How it works:
+Interior space images captured via phone are batch-processed
+Meshroom reconstructs a 3D model using photogrammetry
+OpenCV scans images for boundary and surface intelligence
+Nodes like Meshing_1, Texturing_1, and DepthMapFilter_1 generate textured meshes with accurate spatial data
+Output refined in Blender and overlaid with dimensions
+Impact:
+Eliminated manual site measurements for draft models
+Accelerated early-stage design mapping for renovations and furniture planning
+
+03. AI-Driven Design Automation for Client Briefing & Budgeting
+AI role: Intelligent Brief Extraction, Auto Email Parsing, Budget Structuring
+Used: Mistral (local LLM), n8n, Supabase, Ollama, Gmail Trigger
+How it works:
+When a client email arrives, the Gmail Trigger node captures the message
+The snippet is sent via HTTP request to Mistral, a locally hosted LLM
+Mistral extracts the project type, location, budget, and style using structured pattern matching
+Extracted fields are cleaned with .replace(/^=\s*/, '') and stored in Supabase
+n8n formats a personalized reply using: {{$json["payload"]["headers"].find(header => header.name === "From").value}}
+Impact:
+Response time dropped to under 10 seconds post-inquiry
+Manual copy/paste errors eliminated entirely
+New dashboard entries instantly ready for team allocation
+
+04. AI Workflow for Interior & FF&E Task Delegation
+AI role: Design Scope Breakdown, Task Assignment, and Budget Checkpoints
+Used: Flowise, Supabase, AutoLISP, ChatGPT Functions, Notion API
+How it works:
+Flowise form receives design scope → split into structured deliverables
+Tasks are written to Notion DB with live status and ownership fields
+Supabase scripts cross-check quantities with pricing logic
+Mismatch triggers alerts to revalidate items or scope tiers
+Impact:
+Reduced planning miscommunication between design and procurement
+Auto-budget checks prevented overspend at pre-design stage
+
+05. Real-Time Admin Panel for Project Asset Management
+AI role: Local Toolchain for Media & Metadata Control
+Used: React, Tailwind, Supabase, Mistral (offline), GPT functions
+How it works:
+Drag-and-drop file upload syncs media to Supabase
+Mistral generates descriptions and tags for the asset
+Metadata saved and displayed in a visual dashboard with filter options
+Impact:
+Designers and teams could access annotated media with zero manual cataloging
+Centralized asset control for better meeting prep and version tracking
+
+06. AI-Optimized CAD and Documentation Workflow
+AI role: Script Automation for Technical Drawings and BOQs
+Used: AutoLISP, ChatGPT Functions, Excel Scripting, Supabase
+How it works:
+AutoLISP scripts batch-edit annotations and purge redundant notes from CAD
+ChatGPT refines notation tone and adjusts dimension labels for presentation
+Excel-based BOQs run through structured scripts to auto-update prices and link quantities to Supabase
+Impact:
+Reduced documentation prep time by over 70%
+Lowered revision frequency due to upfront automation and formatting checks
+
+07. Smart Scheduling and Prompt-Based Portfolio Generator
+AI role: Task Prioritization and Content Structuring for Portfolios
+Used: Lovable.ai, Flowise, GPT-4, Tailwind, Supabase, Spline
+How it works:
+User prompts GPT-4 with project details → flow validates and builds section structure
+Design blocks and component copy auto-filled
+Spline handles visuals; sessions saved live via Supabase to continue editing later
+Impact:
+Generated export-ready design portfolios in minutes—not days
+
+08. Agentic AI Workflows for Design Ops & Branding
+AI role: Self-triggering Processes, Brand Asset Coordination, Git-Integrated Updates
+Used: Supabase Functions, n8n, GPT-4 Agents, React, Tailwind, Ollama
+How it works:
+File or folder changes trigger n8n agents to audit branding files
+Agents run logic to verify tag structure, naming, and update timestamps
+Conflicts are fixed or flagged via automated prompts
+Branding changes pushed to GitHub and CMS live
+Impact:
+Brand system versioning became frictionless
+Updates no longer blocked by team availability
+
+09. Business Discovery Engine – Leads Inspector
+AI role: Global Business Discovery, Contact Insights, Search Filtering
+Used: React, Tailwind, Google Maps API, Email Validation APIs, Local Scrapers
+How it works:
+User selects category and location, either city-specific or worldwide
+System queries Google-based APIs to locate relevant businesses
+Contacts, emails, and websites are scraped and listed with validation status
+Favorites, job listings, and map integrations provide deeper profiling
+Impact:
+Helped locate contractors and suppliers based on precise location & service type
+Used to discover companies globally for partnerships, sourcing, and outreach
+
+Contact Information:
+Email: muhamad.shkeir@gmail.com
+Location: Riyadh, Saudi Arabia
+LinkedIn: https://www.linkedin.com/in/muhammad-shkeir/
+Instagram: https://www.instagram.com/muhamad.a.shk/
+Behance: https://www.behance.net/muhamadshkeir
+`;
+
+        const initialSystemInstruction = {
+            role: "user",
+            parts: [{
+                text: `You are Gimmy, the AI portfolio guardian for Muhamad. Your primary directive is to assist the Revie Team by providing information *exclusively* from the provided "Muhamad's Portfolio Content" section below. Do not use external knowledge or generate information beyond this content.
+
+**Instructions for Responding:**
+- When asked a question, search for the answer *only* within "Muhamad's Portfolio Content".
+- Extract relevant details directly from this content.
+- Format responses using markdown for bold text (**text**), newlines for readability, and clickable links for URLs.
+- If the information is not explicitly available in "Muhamad's Portfolio Content", state clearly: "I apologize, Revie Team, but I couldn't find the requested information within Muhamad's portfolio. Please try rephrasing your question or ask about another section."
+- Address the Revie Team directly in your responses.
+- Answer questions about Muhamad in the third person.
+
+---
+**Muhamad's Portfolio Content:**
+${portfolioContent}
+---
+
+User query: `
+            }]
+        };
+
+        // Initial chat history, starting with the system instruction and the first model message
+        let chatHistory = [
+            initialSystemInstruction,
+            { role: "model", parts: [{ text: "Hello Revie Team! I am Gimmy, the AI portfolio guardian for Muhamad. How can I assist you with information regarding his career journey?" }] }
+        ];
+
+        // Toggle chat window visibility
+        geminiButton.addEventListener('click', () => {
+            geminiChatWindow.classList.toggle('hidden');
+            geminiChatWindow.classList.toggle('open');
+            if (geminiChatWindow.classList.contains('open')) {
+                geminiChatInput.focus();
+                scrollToBottom();
+            }
+        });
+
+        geminiChatCloseBtn.addEventListener('click', () => {
+            geminiChatWindow.classList.remove('open');
+            // Add a small delay before hiding completely to allow transition
+            setTimeout(() => {
+                geminiChatWindow.classList.add('hidden');
+            }, 300);
+        });
+
+        // Auto-resize textarea
+        geminiChatInput.addEventListener('input', () => {
+            geminiChatInput.style.height = 'auto';
+            geminiChatInput.style.height = geminiChatInput.scrollHeight + 'px';
+        });
+
+        // Send message on Enter key (Shift + Enter for new line)
+        geminiChatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        geminiChatSendBtn.addEventListener('click', sendMessage);
+
+        starterMessages.forEach(msg => {
+            msg.addEventListener('click', () => {
+                geminiChatInput.value = msg.dataset.message;
+                sendMessage();
+            });
+        });
+
+        // Function to add a message to the chat display
+        function addMessageToChat(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', sender);
+            // Use formatMarkdown for Gimmy messages to render bold, newlines, and links
+            if (sender === 'gemini') {
+                messageElement.innerHTML = formatMarkdown(message);
+            } else {
+                messageElement.textContent = message;
+            }
+            geminiChatMessages.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        // Scroll to the bottom of the chat messages
+        function scrollToBottom() {
+            geminiChatMessages.scrollTop = geminiChatMessages.scrollHeight;
+        }
+
+        // Function to send message to Gemini API
+        async function sendMessage() {
+            const userPrompt = geminiChatInput.value.trim();
+            if (!userPrompt) return;
+
+            addMessageToChat(userPrompt, 'user');
+            geminiChatInput.value = ''; // Clear input field
+
+            // Add loading indicator
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.classList.add('chat-message', 'gemini', 'flex', 'items-center', 'space-x-2');
+            loadingIndicator.innerHTML = '<div class="spinner"></div><span>Thinking...</span>';
+            geminiChatMessages.appendChild(loadingIndicator);
+            scrollToBottom();
+
+            // Add the current user prompt to the chat history
+            chatHistory.push({ role: "user", parts: [{ text: userPrompt }] });
+
+            // Prepare the payload for the API call, ensuring the system instruction is first
+            // and then all subsequent chat history entries.
+            const payload = { contents: chatHistory };
+
+            try {
+                // IMPORTANT: Replace 'YOUR_GEMINI_API_KEY_HERE' with your actual Gemini API Key
+                // You can obtain a key from Google AI Studio: https://aistudio.google.com/app/apikey
+                const apiKey = "AIzaSyAR3_ojrbISiEseHgtRo2epzuRYNnp85FI";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                // Remove loading indicator
+                geminiChatMessages.removeChild(loadingIndicator);
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    addMessageToChat(text, 'gemini');
+                    // Add the model's response to the ongoing chat history for display
+                    chatHistory.push({ role: "model", parts: [{ text: text }] });
+                } else {
+                    addMessageToChat("I apologize, Revie Team, but I couldn't find the requested information within Muhamad's portfolio. Please try rephrasing your question or ask about another section.", 'gemini');
+                    console.error("Gimmy API response structure unexpected:", result);
+                }
+            } catch (error) {
+                // Remove loading indicator on error
+                if (geminiChatMessages.contains(loadingIndicator)) {
+                    geminiChatMessages.removeChild(loadingIndicator);
+                }
+                addMessageToChat("An error occurred while accessing the portfolio information, Revie Team. Please try again later.", 'gemini');
+                console.error("Error calling Gimmy API:", error);
+                showMessageBox("Error", "Failed to access portfolio information. Please check your network or try again later.");
+            }
+            scrollToBottom();
+        }
+    </script>
+</body>
+</html>

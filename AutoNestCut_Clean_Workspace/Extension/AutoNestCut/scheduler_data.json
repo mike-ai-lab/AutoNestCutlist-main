@@ -8,7 +8,7 @@
     },
     "format": "csv",
     "email": "muhamad.shkeir@gmail.com",
-    "next_run": 1764050400,
+    "next_run": 1764136800,
     "active": true
   },
   {
@@ -20,7 +20,7 @@
     },
     "format": "csv",
     "email": "muhamad.shkeir@gmail.com",
-    "next_run": 1764093600,
+    "next_run": 1764180000,
     "active": true
   }
 ]

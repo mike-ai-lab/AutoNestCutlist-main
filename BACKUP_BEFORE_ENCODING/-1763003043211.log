@@ -1,0 +1,10 @@
+diagrams_report.js:193 No report data available
+renderReport @ diagrams_report.js:193
+diagrams_report.js:193 No report data available
+renderReport @ diagrams_report.js:193
+main.html:301 Uncaught ReferenceError: expandAll is not defined
+    at HTMLButtonElement.onclick (main.html:301:69)
+main.html:302 Uncaught ReferenceError: collapseAll is not defined
+    at HTMLButtonElement.onclick (main.html:302:71)
+main.html:300 Uncaught ReferenceError: clearTreeSearch is not defined
+    at HTMLButtonElement.onclick (main.html:300:98)

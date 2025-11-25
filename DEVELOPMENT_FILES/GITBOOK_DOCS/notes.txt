@@ -1,0 +1,7 @@
+Standard company formats and layouts
+Client-specific customizations
+Version control and template management
+Scheduled exports for regular reporting
+Integration with project management systems
+Automatic distribution to stakeholders
+Event-triggered export generation

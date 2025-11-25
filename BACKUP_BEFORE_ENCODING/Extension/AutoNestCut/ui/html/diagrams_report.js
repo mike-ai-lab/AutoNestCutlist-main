@@ -259,14 +259,14 @@ function renderReport() {
     const summaryTable = document.getElementById('summaryTable');
     if (summaryTable) {
         console.log('Rendering summary table');
-        summaryTable.innerHTML = `
+        summaryTable.innerHTML = `<div class="table-wrapper"><table>
             <tr><th>Metric</th><th>Value</th></tr>
             <tr><td>Total Parts Instances</td><td>${g_reportData.summary.total_parts_instances || 0}</td></tr>
             <tr><td>Total Unique Part Types</td><td>${g_reportData.summary.total_unique_part_types || 0}</td></tr>
             <tr><td>Total Boards</td><td>${g_reportData.summary.total_boards || 0}</td></tr>
             <tr><td>Overall Efficiency</td><td>${formatNumber(g_reportData.summary.overall_efficiency || 0, reportPrecision)}%</td></tr>
             <tr><td><strong>Total Project Cost</strong></td><td class="total-highlight"><strong>${currencySymbol}${(g_reportData.summary.total_project_cost || 0).toFixed(2)}</strong></td></tr>
-        `;
+        </table></div>`;
         addCopyButton('Overall Summary', 'summaryTable');
     } else {
         console.error('summaryTable element not found');
@@ -274,13 +274,13 @@ function renderReport() {
 
     const materialsContainer = document.getElementById('materialsContainer');
     if (materialsContainer && g_reportData.unique_board_types) {
-        let materialsHtml = `<table><tr><th>Material</th><th>Price</th></tr>`;
+        let materialsHtml = `<div class="table-wrapper"><table><tr><th>Material</th><th>Price</th></tr>`;
         g_reportData.unique_board_types.forEach(board_type => {
             const boardCurrency = board_type.currency || currency;
             const boardSymbol = currencySymbols[boardCurrency] || boardCurrency;
             materialsHtml += `<tr><td>${board_type.material}</td><td>${boardSymbol}${(board_type.price_per_sheet || 0).toFixed(2)}</td></tr>`;
         });
-        materialsHtml += `</table>`;
+        materialsHtml += `</table></div>`;
         materialsContainer.innerHTML = materialsHtml;
         addCopyButton('Materials Used', 'materialsContainer');
     }
@@ -288,60 +288,53 @@ function renderReport() {
     const uniquePartTypesTable = document.getElementById('uniquePartTypesTable');
     if (uniquePartTypesTable) {
         console.log('Rendering unique part types table');
-        let html = `<tr><th>Name</th><th style="width: 50px;">W (${reportUnits})</th><th style="width: 50px;">H (${reportUnits})</th><th style="width: 50px;">Thick (${reportUnits})</th><th>Material</th><th>Grain</th><th style="width: 50px;">Total Qty</th><th style="width: 60px;">Total Area</th></tr>`;
+        let html = `<div class="tables-container"><div class="table-wrapper side-by-side"><table><tr><th>Name</th><th>W (${reportUnits})</th><th>H (${reportUnits})</th><th>Material</th><th>Qty</th></tr>`;
         if (g_reportData.unique_part_types && g_reportData.unique_part_types.length > 0) {
             console.log('Found', g_reportData.unique_part_types.length, 'unique part types');
             g_reportData.unique_part_types.forEach(part_type => {
                 const width = part_type.width / unitFactors[reportUnits];
                 const height = part_type.height / unitFactors[reportUnits];
-                const thickness = part_type.thickness / unitFactors[reportUnits];
                 
-                // Use the global formatNumber function
                 html += `
                     <tr>
                         <td title="${part_type.name}">${part_type.name}</td>
                         <td>${formatNumber(width, reportPrecision)}</td>
                         <td>${formatNumber(height, reportPrecision)}</td>
-                        <td>${formatNumber(thickness, reportPrecision)}</td>
                         <td>${part_type.material}</td>
-                        <td>${part_type.grain_direction}</td>
                         <td class="total-highlight">${part_type.total_quantity}</td>
-                        <td>${getAreaDisplay(part_type.total_area, currentAreaUnits)}</td>
                     </tr>
                 `;
             });
         }
+        html += `</table></div>`;
         uniquePartTypesTable.innerHTML = html;
         addCopyButton('Unique Part Types', 'uniquePartTypesTable');
     } else {
         console.error('uniquePartTypesTable element not found');
     }
 
-    // Sheet Inventory Summary Table
-    const sheetInventoryTable = document.getElementById('sheetInventoryTable');
-    if (sheetInventoryTable && g_reportData.unique_board_types) {
-        let html = `<tr><th>Material</th><th>Dimensions</th><th>Count</th><th>Total Area</th><th>Price/Sheet</th><th>Total Cost</th></tr>`;
+    // Add the second table to the existing container
+    if (uniquePartTypesTable && g_reportData.unique_board_types) {
+        let sheetHtml = `<div class="table-wrapper side-by-side"><table><tr><th>Material</th><th>Count</th><th>Price/Sheet</th><th>Total Cost</th></tr>`;
         g_reportData.unique_board_types.forEach(board_type => {
             const boardCurrency = board_type.currency || currency;
             const boardSymbol = currencySymbols[boardCurrency] || boardCurrency;
-            const dimMatch = (board_type.dimensions_mm || board_type.dimensions || '2440 x 1220 mm').match(/(\d+(?:\.\d+)?)\s*x\s*(\d+(?:\.\d+)?)/i);
-            const width = dimMatch ? parseFloat(dimMatch[1]) / unitFactors[reportUnits] : 2440 / unitFactors[reportUnits];
-            const height = dimMatch ? parseFloat(dimMatch[2]) / unitFactors[reportUnits] : 1220 / unitFactors[reportUnits];
-            const dimensionsStr = `${formatNumber(width, reportPrecision)} × ${formatNumber(height, reportPrecision)} ${reportUnits}`;
             
-            html += `
+            sheetHtml += `
                 <tr>
                     <td>${board_type.material}</td>
-                    <td>${dimensionsStr}</td>
                     <td class="total-highlight">${board_type.count}</td>
-                    <td>${getAreaDisplay(board_type.total_area, currentAreaUnits)}</td>
                     <td>${boardSymbol}${(board_type.price_per_sheet || 0).toFixed(2)}</td>
                     <td class="total-highlight">${boardSymbol}${(board_type.total_cost || 0).toFixed(2)}</td>
                 </tr>
             `;
         });
-        sheetInventoryTable.innerHTML = html;
-        addCopyButton('Sheet Inventory Summary', 'sheetInventoryTable');
+        sheetHtml += `</table></div></div>`;
+        
+        // Append the second table to the existing container
+        uniquePartTypesTable.innerHTML += sheetHtml;
+        
+
     }
 
     // Render cost breakdown in independent container
@@ -389,13 +382,13 @@ function renderReport() {
             <strong>Cost Analysis:</strong> Avg: ${currencySymbol}${avgCost.toFixed(2)} | Min: ${currencySymbol}${minCost.toFixed(2)} | Max: ${currencySymbol}${maxCost.toFixed(2)}
         </div>`;
         
-        let costTableHtml = `${costAnalysisHtml}<table><tr><th>Material</th><th>Parts</th><th>Cost</th><th>Percentage</th></tr>`;
+        let costTableHtml = `${costAnalysisHtml}<div class="table-wrapper"><table><tr><th>Material</th><th>Parts</th><th>Cost</th><th>Percentage</th></tr>`;
         Object.entries(materialCosts).forEach(([material, data]) => {
             const percentage = totalPartsCost > 0 ? (data.cost / totalPartsCost * 100) : 0;
             const symbol = currencySymbols[data.currency] || data.currency;
             costTableHtml += `<tr><td>${material}</td><td>${data.count}</td><td>${symbol}${data.cost.toFixed(2)}</td><td>${percentage.toFixed(1)}%</td></tr>`;
         });
-        costTableHtml += `<tr style="border-top: 2px solid #22863a; background: #f6ffed;"><td colspan="2" style="font-weight: bold;">Total</td><td style="font-weight: bold; color: #22863a;">${currencySymbol}${totalPartsCost.toFixed(2)}</td><td style="font-weight: bold;">100.0%</td></tr></table>`;
+        costTableHtml += `<tr style="border-top: 2px solid #22863a; background: #f6ffed;"><td colspan="2" style="font-weight: bold;">Total</td><td style="font-weight: bold; color: #22863a;">${currencySymbol}${totalPartsCost.toFixed(2)}</td><td style="font-weight: bold;">100.0%</td></tr></table></div>`;
         
         costBreakdownContainer.innerHTML = costTableHtml;
         addCopyButton('Cost Breakdown', 'costBreakdownContainer');
@@ -432,7 +425,7 @@ function renderReport() {
         const maxCost = Math.max(...costs, 0);
         const minCost = Math.min(...costs, maxCost);
         
-        let partsHtml = `<tr><th>ID</th><th>Name</th><th>Dimensions</th><th>Material</th><th>Board#</th><th>Cost</th><th>Level</th></tr>`;
+        let partsHtml = `<div class="table-wrapper"><table><tr><th>ID</th><th>Name</th><th>Dimensions</th><th>Material</th><th>Board#</th><th>Cost</th><th>Level</th></tr>`;
         
         partsWithCosts.forEach(part => {
             const partId = part.part_unique_id || part.part_number;
@@ -464,7 +457,7 @@ function renderReport() {
                     <td style="font-weight: bold; color: #22863a;">${currencySymbol}${totalPartsCost.toFixed(2)}</td>
                     <td></td>
                 </tr>
-            `;
+            </table></div>`;
         
         // Remove existing cost analysis containers to prevent duplicates
         const existingAnalysis = partsTable.parentNode.querySelectorAll('.cost-analysis-isolated');

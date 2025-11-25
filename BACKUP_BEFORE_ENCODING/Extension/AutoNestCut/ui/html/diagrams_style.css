@@ -179,6 +179,18 @@ button:hover {
     position: relative;
 }
 
+.tables-container {
+    width: 850px;
+    display: flex;
+    gap: 50px;
+    justify-content: center;
+}
+
+.table-wrapper.side-by-side {
+    width: 375px;
+    flex: 0 0 375px;
+}
+
 table {
     border-collapse: collapse;
     font-size: 14px;
@@ -187,6 +199,11 @@ table {
     background: #ffffff;
     margin: 0;
     table-layout: auto;
+}
+
+.table-wrapper.side-by-side table {
+    width: 325px;
+    min-width: 325px;
 }
 
 th, td {

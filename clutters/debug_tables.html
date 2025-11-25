@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Table Debug Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 2px solid #007cba; }
+        .debug-info { background: #f0f8ff; padding: 10px; margin: 10px 0; }
+        .side-by-side-tables { display: flex; gap: 16px; margin: 20px 0; }
+        .side-table { flex: 1; min-width: 0; }
+        .side-table table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 10px; }
+        .side-table th, .side-table td { 
+            padding: 3px 4px; 
+            border: 1px solid #d0d7de; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+        }
+        .side-table th:first-child, .side-table td:first-child { width: 60%; }
+        .side-table th:last-child, .side-table td:last-child { width: 40%; }
+        .test-table { border: 2px solid red; }
+    </style>
+</head>
+<body>
+    <h1>Table Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h2>Test 1: Basic Side-by-Side Tables</h2>
+        <div class="side-by-side-tables">
+            <div class="side-table">
+                <h3>Materials Used</h3>
+                <table id="materialsUsedTable" class="test-table">
+                    <tr><th>Material</th><th>Price</th></tr>
+                    <tr><td>Plywood 18mm</td><td>$45.00</td></tr>
+                    <tr><td>MDF 25mm</td><td>$32.50</td></tr>
+                </table>
+            </div>
+            <div class="side-table">
+                <h3>Summary</h3>
+                <table id="summaryTable" class="test-table">
+                    <tr><th>Metric</th><th>Value</th></tr>
+                    <tr><td>Total Parts</td><td>25</td></tr>
+                    <tr><td>Efficiency</td><td>85%</td></tr>
+                </table>
+            </div>
+        </div>
+        <div class="debug-info" id="debug1"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>Test 2: Table Dimensions</h2>
+        <button onclick="debugTableDimensions()">Check Table Dimensions</button>
+        <div class="debug-info" id="debug2"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>Test 3: CSS Applied Styles</h2>
+        <button onclick="debugAppliedStyles()">Check Applied CSS</button>
+        <div class="debug-info" id="debug3"></div>
+    </div>
+
+    <script>
+        function debugTableDimensions() {
+            const tables = document.querySelectorAll('.side-table table');
+            let info = '';
+            
+            tables.forEach((table, i) => {
+                const rect = table.getBoundingClientRect();
+                const cells = table.querySelectorAll('td, th');
+                
+                info += `<strong>Table ${i+1}:</strong><br>`;
+                info += `- Table size: ${rect.width}px × ${rect.height}px<br>`;
+                info += `- Visible: ${rect.width > 0 && rect.height > 0}<br>`;
+                
+                cells.forEach((cell, j) => {
+                    const cellRect = cell.getBoundingClientRect();
+                    info += `- Cell ${j+1}: ${cellRect.width}px × ${cellRect.height}px - "${cell.textContent}"<br>`;
+                });
+                info += '<br>';
+            });
+            
+            document.getElementById('debug2').innerHTML = info;
+        }
+
+        function debugAppliedStyles() {
+            const table = document.querySelector('#materialsUsedTable');
+            const cell = table.querySelector('td');
+            const computed = window.getComputedStyle(cell);
+            
+            let info = '<strong>Applied CSS on first cell:</strong><br>';
+            info += `- width: ${computed.width}<br>`;
+            info += `- max-width: ${computed.maxWidth}<br>`;
+            info += `- min-width: ${computed.minWidth}<br>`;
+            info += `- display: ${computed.display}<br>`;
+            info += `- overflow: ${computed.overflow}<br>`;
+            info += `- white-space: ${computed.whiteSpace}<br>`;
+            info += `- font-size: ${computed.fontSize}<br>`;
+            
+            document.getElementById('debug3').innerHTML = info;
+        }
+
+        // Auto-run basic debug on load
+        window.onload = function() {
+            const container = document.querySelector('.side-by-side-tables');
+            const containerRect = container.getBoundingClientRect();
+            
+            let info = `<strong>Container:</strong> ${containerRect.width}px × ${containerRect.height}px<br>`;
+            info += `<strong>Tables found:</strong> ${document.querySelectorAll('.side-table table').length}<br>`;
+            info += `<strong>Cells found:</strong> ${document.querySelectorAll('.side-table td, .side-table th').length}`;
+            
+            document.getElementById('debug1').innerHTML = info;
+        };
+    </script>
+</body>
+</html>

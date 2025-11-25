@@ -53,7 +53,7 @@ module AutoNestCut
       end
 
       html_file = File.join(__dir__, 'html', 'main.html')
-      @dialog.set_file(html_file)
+      AutoNestCut.set_html_with_cache_busting(@dialog, html_file)
 
       # Send initial data to dialog when it's ready
       @dialog.add_action_callback("ready") do |action_context|
@@ -177,9 +177,64 @@ module AutoNestCut
         end
       end
 
-      @dialog.add_action_callback("export_html") do |action_context|
-        # HTML export is handled entirely in JavaScript
-        # This callback exists for potential future server-side HTML generation
+      @dialog.add_action_callback("export_interactive_html") do |action_context, report_data_json|
+        begin
+          report_data = JSON.parse(report_data_json)
+          export_interactive_html_report(report_data)
+        rescue => e
+          puts "ERROR exporting interactive HTML: #{e.message}"
+          UI.messagebox("Error exporting HTML: #{e.message}")
+        end
+      end
+      
+      @dialog.add_action_callback("save_html_report") do |action_context, html_content|
+        begin
+          model_name = Sketchup.active_model.title.empty? ? "Untitled" : Sketchup.active_model.title.gsub(/[^\w]/, '_')
+          base_name = "AutoNestCut_Report_#{model_name}"
+          counter = 1
+          desktop_path = Compatibility.desktop_path
+          
+          loop do
+            filename = "#{base_name}_#{counter}.html"
+            full_path = File.join(desktop_path, filename)
+            
+            unless File.exist?(full_path)
+              File.write(full_path, html_content, encoding: 'UTF-8')
+              UI.messagebox("Interactive HTML report exported to Desktop: #{filename}")
+              return
+            end
+            
+            counter += 1
+          end
+        rescue => e
+          puts "ERROR exporting HTML: #{e.message}"
+          puts e.backtrace
+          UI.messagebox("Error exporting HTML: #{e.message}")
+        end
+      end
+      
+      @dialog.add_action_callback("print_pdf") do |action_context, html_content|
+        begin
+          print_dialog = UI::HtmlDialog.new(
+            dialog_title: "AutoNestCut PDF Preview",
+            preferences_key: "AutoNestCut_PDF_Preview",
+            scrollable: true,
+            resizable: true,
+            width: 900,
+            height: 800
+          )
+          
+          desktop_path = Compatibility.desktop_path
+          temp_file = File.join(desktop_path, "AutoNestCut_PDF_Preview_Temp.html")
+          File.write(temp_file, html_content, encoding: 'UTF-8')
+          
+          print_dialog.set_file(temp_file)
+          print_dialog.show
+        rescue => e
+          puts "ERROR opening PDF preview: #{e.message}"
+          puts e.backtrace
+          UI.messagebox("Error opening PDF preview: #{e.message}")
+        end
       end
 
       @dialog.add_action_callback("back_to_config") do |action_context|
@@ -742,6 +797,88 @@ module AutoNestCut
 
         counter += 1
       end
+    end
+
+    def export_interactive_html_report(report_data)
+      model_name = Sketchup.active_model.title.empty? ? "Untitled" : Sketchup.active_model.title.gsub(/[^\w]/, '_')
+      base_name = "AutoNestCut_Interactive_Report_#{model_name}"
+      counter = 1
+      desktop_path = Compatibility.desktop_path
+
+      loop do
+        filename = "#{base_name}_#{counter}.html"
+        full_path = File.join(desktop_path, filename)
+
+        unless File.exist?(full_path)
+          html_content = generate_standalone_html(report_data)
+          File.write(full_path, html_content, encoding: 'UTF-8')
+          UI.messagebox("Interactive HTML report exported to Desktop: #{filename}")
+          return
+        end
+
+        counter += 1
+      end
+    end
+
+    def generate_standalone_html(report_data)
+      css_file = File.join(__dir__, 'html', 'diagrams_style.css')
+      css_content = File.read(css_file)
+      js_file = File.join(__dir__, 'html', 'diagrams_report.js')
+      js_content = File.read(js_file)
+
+      <<~HTML
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>AutoNestCut Interactive Report</title>
+        <style>#{css_content}</style>
+      </head>
+      <body>
+        <div class="container">
+          <div id="diagramsContainer" class="diagrams-container"><h2>Diagrams</h2></div>
+          <div class="resizer" id="resizer"></div>
+          <div id="reportContainer" class="report-container">
+            <h2>Report Details</h2>
+            <div class="section-separator"></div>
+            <h2>Overall Summary</h2>
+            <table id="summaryTable"></table>
+            <div class="section-separator"></div>
+            <h2>Unique Part Types</h2>
+            <table id="uniquePartTypesTable"></table>
+            <div class="section-separator"></div>
+            <h2>Sheet Inventory Summary</h2>
+            <table id="sheetInventoryTable"></table>
+            <div class="section-separator"></div>
+            <h2>Cut List & Part Details</h2>
+            <table id="partsTable"></table>
+          </div>
+        </div>
+        <div id="partModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-controls"><button id="projectionToggle">Orthographic</button></div>
+            <canvas id="modalCanvas" width="500" height="400"></canvas>
+            <div id="modalInfo"></div>
+          </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+        <script>#{js_content}</script>
+        <script>
+          const reportData = #{report_data.to_json};
+          document.addEventListener('DOMContentLoaded', () => {
+            receiveData(reportData);
+            initResizer();
+            const modal = document.getElementById('partModal');
+            const closeBtns = document.querySelectorAll('#partModal .close');
+            closeBtns.forEach(btn => btn.addEventListener('click', () => modal.style.display = 'none'));
+            window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+          });
+        </script>
+      </body>
+      </html>
+      HTML
     end
   end
 end
